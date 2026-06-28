@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "czech-quest",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "8077"],
+      "port": 8077,
+      "autoPort": false
+    }
+  ]
+}

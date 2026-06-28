@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Natasha · Čeština">
+<meta name="theme-color" content="#FAF8F3">
+<title>Natasha's Czech Quest</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FAF8F3;--card:#FFFFFF;--ink:#20201E;--ink-soft:#6B6B64;--line:#EAE7DD;
+    --sage:#5C7363;--sage-tint:#E9EEE9;--gold:#E0A93B;--gold-tint:#FBF0D8;
+    --red:#C8443F;--red-tint:#F8E5E4;--green:#2F9E5A;--green-tint:#E4F2E9;
+    --lvl:#E0A93B;--lvl-tint:#FBF0D8;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%}
+  body{background:var(--paper);color:var(--ink);font-family:'Inter',sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased;padding-bottom:env(safe-area-inset-bottom)}
+  .app{max-width:460px;margin:0 auto;min-height:100%;display:flex;flex-direction:column}
+
+  .hud{position:sticky;top:0;z-index:20;background:var(--paper);padding:calc(14px + env(safe-area-inset-top)) 18px 12px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--line)}
+  .pill{font-family:'Space Mono',monospace;font-weight:700;font-size:13px;letter-spacing:1px;color:#fff;background:var(--lvl);border-radius:999px;padding:6px 13px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;border:none}
+  .stat{font-family:'Space Mono',monospace;font-size:14px;font-weight:700;display:flex;align-items:center;gap:4px;color:var(--ink)}
+  .stat small{font-weight:400;color:var(--ink-soft);font-size:11px}
+  .spacer{flex:1}
+  .scroll{flex:1;overflow-y:auto;padding:18px;padding-bottom:30px}
+
+  .welcome{margin:2px 2px 18px}
+  .welcome .hi{font-family:'Newsreader',serif;font-size:28px;font-weight:600;line-height:1.1}
+  .welcome .sub{font-size:14px;color:var(--ink-soft);margin-top:4px}
+
+  .lvlcard{background:var(--lvl-tint);border-radius:16px;padding:16px 18px;margin-bottom:18px}
+  .lvlcard .row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
+  .lvlcard h2{font-size:15px;font-weight:600}
+  .lvlcard .goal{font-size:12px;color:var(--ink-soft)}
+  .dots{display:flex;gap:7px;margin-top:4px}
+  .dot{width:100%;height:8px;border-radius:99px;background:rgba(0,0,0,.08)}
+  .dot.on{background:var(--lvl)}
+  .lvlcard .hint{font-size:12px;color:var(--ink-soft);margin-top:9px}
+
+  .review{background:#fff;border:1.5px solid var(--gold);border-radius:16px;padding:14px 16px;margin-bottom:18px}
+  .review h3{font-size:14px;font-weight:600;margin-bottom:3px;display:flex;align-items:center;gap:6px}
+  .review .desc{font-size:12px;color:var(--ink-soft);margin-bottom:10px}
+  .weakrow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 0;border-top:1px solid var(--line)}
+  .weakrow .wn{font-size:14px;font-weight:500}
+  .weakrow .wn small{display:block;color:var(--ink-soft);font-weight:400;font-size:11px}
+
+  .sechead{font-family:'Space Mono',monospace;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-soft);margin:0 2px 12px}
+
+  .story-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 17px;margin-bottom:12px;cursor:pointer;display:flex;align-items:center;gap:14px;transition:transform .08s}
+  .story-card:active{transform:scale(.985)}
+  .story-num{width:38px;height:38px;flex:none;border-radius:11px;background:var(--lvl-tint);color:var(--lvl);font-family:'Space Mono',monospace;font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center}
+  .story-card.done .story-num{background:var(--green-tint);color:var(--green)}
+  .story-meta{flex:1;min-width:0}
+  .story-meta .t{font-family:'Newsreader',serif;font-size:18px;font-weight:600;line-height:1.2}
+  .story-meta .e{font-size:13px;color:var(--ink-soft);margin-top:1px}
+  .stars{font-size:13px;letter-spacing:1px;color:var(--gold);white-space:nowrap}
+  .stars .off{color:#DAD6CB}
+
+  .topnav{display:flex;align-items:center;gap:8px;margin-bottom:16px}
+  .back{background:none;border:none;font-size:15px;color:var(--ink-soft);cursor:pointer;font-weight:500;display:flex;align-items:center;gap:5px;padding:4px 0}
+  h1.story-title{font-family:'Newsreader',serif;font-weight:600;font-size:27px;line-height:1.15;margin-bottom:2px}
+  .story-sub{color:var(--ink-soft);font-size:14px;margin-bottom:18px}
+  .story-body{font-family:'Newsreader',serif;font-size:20px;line-height:1.75}
+  .gloss{border-bottom:2px dotted var(--sage);cursor:pointer;position:relative}
+  .gloss.active{background:var(--sage-tint)}
+  .gloss .pop{display:none;position:absolute;bottom:128%;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;font-family:'Inter',sans-serif;font-size:13px;white-space:nowrap;padding:6px 10px;border-radius:8px;z-index:5;box-shadow:0 4px 14px rgba(0,0,0,.2)}
+  .gloss .pop::after{content:"";position:absolute;top:100%;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:var(--ink)}
+  .gloss.active .pop{display:block}
+  .readtip{font-size:12px;color:var(--ink-soft);font-style:italic;margin:14px 0 4px}
+  .audio-row{display:flex;gap:9px;margin:16px 0 8px}
+  .glossbox{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:6px 16px;margin:18px 0}
+  .glossbox .gi{display:flex;justify-content:space-between;gap:14px;padding:9px 0;border-bottom:1px solid var(--line);font-size:14px}
+  .glossbox .gi:last-child{border-bottom:none}
+  .glossbox .gi .cz{font-family:'Newsreader',serif;font-weight:500;font-size:16px}
+  .glossbox .gi .en{color:var(--ink-soft);text-align:right}
+  .glabel{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--sage);padding:12px 0 2px}
+
+  .qprogress{display:flex;gap:6px;margin-bottom:22px}
+  .qbar{flex:1;height:6px;border-radius:99px;background:var(--line)}
+  .qbar.on{background:var(--lvl)}
+  .qcount{font-family:'Space Mono',monospace;font-size:12px;color:var(--ink-soft);margin-bottom:10px;letter-spacing:1px}
+  .qtext{font-family:'Newsreader',serif;font-size:23px;font-weight:600;line-height:1.25;margin-bottom:22px}
+  .opt{display:block;width:100%;text-align:left;font-family:'Inter',sans-serif;font-size:16px;font-weight:500;background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:15px 16px;margin-bottom:11px;cursor:pointer;color:var(--ink);transition:transform .07s}
+  .opt:active{transform:scale(.99)}
+  .opt.correct{background:var(--green-tint);border-color:var(--green);color:#1d6e3c}
+  .opt.wrong{background:var(--red-tint);border-color:var(--red);color:var(--red)}
+  .opt:disabled{cursor:default}
+  .fill{width:100%;font-family:'Newsreader',serif;font-size:20px;padding:14px 16px;border:1.5px solid var(--line);border-radius:14px;background:#fff;color:var(--ink);outline:none}
+  .fill:focus{border-color:var(--lvl)}
+  .fill.ok{border-color:var(--green);background:var(--green-tint)}
+  .fill.bad{border-color:var(--red);background:var(--red-tint)}
+  .qfeedback{text-align:center;font-weight:600;font-size:15px;min-height:24px;margin-top:14px}
+  .qfeedback.ok{color:var(--green)}
+  .qfeedback.no{color:var(--red)}
+  .explain-box{background:var(--gold-tint);border-radius:12px;padding:12px 14px;font-size:13.5px;line-height:1.5;color:#6a4e12;margin-top:12px}
+
+  .footer{position:sticky;bottom:0;background:linear-gradient(to top, var(--paper) 70%, transparent);padding:14px 18px calc(16px + env(safe-area-inset-bottom))}
+  .btn{font-family:'Inter',sans-serif;font-weight:600;font-size:16px;cursor:pointer;border-radius:14px;padding:16px;border:none;width:100%;background:var(--lvl);color:#fff;transition:transform .08s}
+  .btn:active{transform:scale(.98)}
+  .btn:disabled{opacity:.4;cursor:default}
+  .btn.ghost{background:var(--card);color:var(--ink);border:1.5px solid var(--line)}
+  .btn.small{font-size:14px;font-weight:500;border-radius:10px;padding:10px 14px;width:auto}
+
+  .result{text-align:center;padding:30px 0 10px}
+  .result .ring{font-size:64px;line-height:1;margin-bottom:8px}
+  .result h1{font-family:'Newsreader',serif;font-size:30px;font-weight:600;margin-bottom:4px}
+  .result .bigstars{font-size:38px;letter-spacing:6px;color:var(--gold);margin:8px 0}
+  .result .bigstars .off{color:#DAD6CB}
+  .result p{color:var(--ink-soft);font-size:15px;margin-bottom:18px;padding:0 10px}
+  .rewards{display:flex;justify-content:center;gap:14px;margin-bottom:22px;flex-wrap:wrap}
+  .reward{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 18px;min-width:90px}
+  .reward .v{font-family:'Space Mono',monospace;font-weight:700;font-size:20px}
+  .reward .l{font-size:11px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:1px;margin-top:2px}
+  .banner{border-radius:14px;padding:16px;margin-bottom:18px;font-weight:600;font-size:15px}
+  .banner.up{background:var(--green-tint);color:#1d6e3c}
+  .banner.down{background:var(--gold-tint);color:#8a6516}
+  .lessoncall{text-align:left;background:#fff;border:1.5px solid var(--gold);border-radius:14px;padding:16px;margin-bottom:18px}
+  .lessoncall h4{font-size:14px;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+  .lessoncall p{font-size:13.5px;color:var(--ink-soft);margin:0 0 12px;padding:0;text-align:left}
+
+  .lessonwrap h1{font-family:'Newsreader',serif;font-size:26px;font-weight:600;margin-bottom:4px}
+  .lessonwrap .lvl-en{color:var(--ink-soft);font-size:14px;margin-bottom:18px}
+  .lessonbody{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;font-size:16px;line-height:1.65}
+
+  .scrim{position:fixed;inset:0;background:rgba(20,20,18,.5);display:none;align-items:flex-end;justify-content:center;z-index:50}
+  .scrim.show{display:flex}
+  .sheet{background:var(--paper);width:100%;max-width:460px;border-radius:22px 22px 0 0;padding:22px 20px calc(26px + env(safe-area-inset-bottom))}
+  .sheet h3{font-family:'Newsreader',serif;font-size:22px;font-weight:600;margin-bottom:4px}
+  .sheet p{font-size:13px;color:var(--ink-soft);margin-bottom:16px}
+  .lvlbtns{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:18px}
+  .lvlbtn{border:1.5px solid var(--line);background:var(--card);border-radius:12px;padding:14px 0;text-align:center;cursor:pointer;font-family:'Space Mono',monospace;font-weight:700;font-size:15px}
+  .lvlbtn.sel{border-color:var(--ink);background:var(--ink);color:#fff}
+  .sheet .reset{background:none;border:none;color:var(--red);font-size:13px;cursor:pointer;text-decoration:underline}
+
+  .hidden{display:none!important}
+  @media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="hud">
+    <button class="pill" id="hudLevel" onclick="openSettings()">A2 ⚙</button>
+    <div class="spacer"></div>
+    <div class="stat" id="hudStreak">🔥 0<small>dnů</small></div>
+    <div class="stat" id="hudXp" style="color:var(--gold)">★ 0<small>XP</small></div>
+  </div>
+
+  <!-- HOME -->
+  <div class="scroll" id="home">
+    <div class="welcome" id="welcome"></div>
+    <div id="reviewBox"></div>
+    <div class="lvlcard">
+      <div class="row"><h2 id="lvlTitle"></h2><span class="goal" id="lvlGoal"></span></div>
+      <div class="dots" id="lvlDots"></div>
+      <div class="hint" id="lvlHint"></div>
+    </div>
+    <div class="sechead">Příběhy · Stories</div>
+    <div id="storyList"></div>
+  </div>
+
+  <!-- READING -->
+  <div class="scroll hidden" id="reading">
+    <div class="topnav"><button class="back" onclick="goHome()">‹ Zpět</button></div>
+    <h1 class="story-title" id="rTitle"></h1>
+    <p class="story-sub" id="rSub"></p>
+    <div class="story-body" id="rBody"></div>
+    <div class="audio-row">
+      <button class="btn ghost small" onclick="speak(1)">▶ Přečíst nahlas</button>
+      <button class="btn ghost small" onclick="speak(0.7)">🐢 Pomalu</button>
+    </div>
+    <p class="readtip" id="rTip">Klepni na podtržené slovo · Tap an underlined word for the meaning.</p>
+    <div class="glabel">Slovníček · Glossary</div>
+    <div class="glossbox" id="rGloss"></div>
+  </div>
+
+  <!-- QUIZ -->
+  <div class="scroll hidden" id="quiz">
+    <div class="topnav"><button class="back" onclick="goHome()">‹ Zpět</button></div>
+    <div class="qprogress" id="qProgress"></div>
+    <div class="qcount" id="qCount"></div>
+    <div class="qtext" id="qText"></div>
+    <div id="qOpts"></div>
+    <div class="qfeedback" id="qFeedback"></div>
+    <div id="qExplain"></div>
+  </div>
+
+  <!-- LESSON -->
+  <div class="scroll hidden lessonwrap" id="lesson">
+    <div class="topnav"><button class="back" onclick="goHome()">‹ Zpět</button></div>
+    <h1 id="lessonTitle"></h1>
+    <div class="lvl-en" id="lessonSub"></div>
+    <div class="lessonbody" id="lessonBody"></div>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="scroll hidden" id="results"></div>
+
+  <div class="footer hidden" id="footer"><button class="btn" id="footerBtn"></button></div>
+</div>
+
+<div class="scrim" id="scrim">
+  <div class="sheet">
+    <h3>Úroveň · Level</h3>
+    <p>The app moves her up on its own as she improves — but you can set her level here.</p>
+    <div class="lvlbtns" id="lvlPicker"></div>
+    <button class="btn" onclick="closeSettings()">Hotovo · Done</button>
+    <div style="text-align:center;margin-top:14px"><button class="reset" onclick="resetAll()">Reset all progress</button></div>
+  </div>
+</div>
+
+<script>
+/* ===== SKILLS: each weak spot gets a short lesson ===== */
+const SKILLS = {
+  "comprehension":{name:"Reading comprehension",lesson:"Read the whole passage before answering — the answer often hinges on a later sentence. Watch out for pivot words that flip meaning: <b>ale</b> (but), <b>naopak</b> (on the contrary), <b>nakonec</b> (in the end), <b>na druhou stranu</b> (on the other hand)."},
+  "vocab-daily":{name:"Everyday vocabulary",lesson:"High-frequency daily words. The trick to making them stick: don't just read them — say a short sentence of your own using each new word out loud."},
+  "vocab-food":{name:"Food vocabulary",lesson:"Food words: <b>jídlo</b> food, <b>maso</b> meat, <b>ovoce</b> fruit, <b>zelenina</b> vegetables, <b>polévka</b> soup, <b>pečivo</b> baked goods, <b>vejce</b> egg."},
+  "vocab-travel":{name:"Travel vocabulary",lesson:"Travel words: <b>cesta</b> journey, <b>výlet</b> trip, <b>dovolená</b> holiday, <b>ubytovat se</b> to check in, <b>půjčit si</b> to rent, <b>pláž</b> beach."},
+  "vocab-abstract":{name:"Abstract vocabulary",lesson:"Higher-level texts lean on abstract nouns. Learn them inside set phrases: <b>podle mého názoru</b> (in my opinion), <b>dát přednost</b> (to prefer), <b>záležet na</b> (to depend on)."},
+  "vocab-idiom":{name:"Idioms & false friends",lesson:"Some phrases don't translate word-for-word. <b>připravit o</b> = to deprive of (NOT 'prepare'). <b>pohltit</b> = to engross. <b>od nepaměti</b> = since time immemorial. Learn each as one whole unit."},
+  "past-tense":{name:"Past tense",lesson:"Czech past = participle (-l / -la / -lo / -li) + present of <b>být</b> for I/you: <b>byl jsem</b>, <b>jeli jsme</b>. In he/she/it/they the helper drops: <b>on jel</b>, <b>oni jeli</b>."},
+  "conditional":{name:"Conditional (would)",lesson:"'Would' uses <b>bych / bys / by / bychom</b>: <b>chtěl bych</b> (I'd like), <b>nechtěl bych se vrátit</b> (I wouldn't want to go back). For 'if', pair it with <b>kdyby</b>: <b>kdybych měl čas, šel bych</b>."},
+  "connectives":{name:"Linking words",lesson:"Connectives steer the sentence: <b>protože</b> because, <b>ale</b> but, <b>zároveň</b> at the same time, <b>na druhou stranu</b> on the other hand, <b>nakonec</b> finally."},
+  "cases":{name:"Noun cases",lesson:"Czech endings shift by role in the sentence. <b>káva</b> → <b>piju kávu</b> (the object takes accusative). Don't grind tables — notice the ending change in each sentence you read."},
+  "grammar-clauses":{name:"Complex sentences",lesson:"Watch the joining words: <b>aby / abychom</b> (so that), <b>místo aby</b> (instead of), <b>jestli / zda</b> (whether). These often trigger a special verb form."}
+};
+
+/* ===== CONTENT — story text uses [czech|english] for tappable glosses ===== */
+const STORIES = [
+  /* A1 */
+  {id:"a1-rodina",level:"A1",titleCz:"Moje rodina",titleEn:"My family",
+   text:"[Jmenuji se|My name is] Tom. [Mám|I have] velkou [rodinu|family]. Můj [táta|dad] je doktor. Moje [máma|mom] je [učitelka|teacher]. Mám jednoho [bratra|brother] a jednu [sestru|sister]. Máme také [psa|a dog]. Pes je [malý|small] a [černý|black]. Mám svou rodinu [rád|I love].",
+   quiz:[
+     {q:"Co dělá Tomův táta?",opts:["učitel","doktor","kuchař"],a:1,skill:"comprehension"},
+     {q:"Kolik má Tom sourozenců?",opts:["jednoho","dva","tři"],a:1,skill:"comprehension"},
+     {q:"Jaký je pes?",opts:["velký a bílý","malý a černý","starý"],a:1,skill:"vocab-daily"}
+   ]},
+  {id:"a1-den",level:"A1",titleCz:"Můj den",titleEn:"My day",
+   text:"[Ráno|In the morning] [vstávám|I get up] v sedm hodin. [Snídám|I have breakfast] chléb a [piju|I drink] [čaj|tea]. Potom jdu do [školy|school]. Ve škole se [učím|I learn] česky a anglicky. V poledne mám [oběd|lunch]. Odpoledne jdu [domů|home]. Večer se [dívám na|I watch] televizi. V deset hodin jdu [spát|to sleep].",
+   quiz:[
+     {q:"V kolik hodin vstává?",opts:["v šest","v sedm","v osm"],a:1,skill:"comprehension"},
+     {q:"Co se učí ve škole?",opts:["matematiku","česky a anglicky","hudbu"],a:1,skill:"comprehension"},
+     {q:"Co dělá večer?",opts:["sportuje","dívá se na televizi","vaří"],a:1,skill:"vocab-daily"}
+   ]},
+  {id:"a1-jidlo",level:"A1",titleCz:"Jídlo",titleEn:"Food",
+   text:"Mám [rád|I like] jídlo. Ráno [jím|I eat] [rohlík|a roll] a [sýr|cheese]. Piju [mléko|milk] nebo kávu. K obědu mám [polévku|soup] a [maso|meat]. Rád piju [vodu|water]. Mám rád [ovoce|fruit], hlavně [jablka|apples] a banány. [Nemám rád|I don't like] [ryby|fish]. Moje máma [vaří|cooks] moc dobře.",
+   quiz:[
+     {q:"Co jí ráno?",opts:["polévku","rohlík a sýr","rybu"],a:1,skill:"vocab-food"},
+     {q:"Jaké ovoce má rád?",opts:["jablka a banány","jen pomeranče","žádné"],a:0,skill:"vocab-food"},
+     {q:"Co nemá rád?",opts:["maso","ryby","ovoce"],a:1,skill:"comprehension"}
+   ]},
+  /* A2 */
+  {id:"a2-eva",level:"A2",titleCz:"Evin obyčejný den",titleEn:"Eva's ordinary day",
+   text:"Ráno Eva [vstává|gets up] v sedm hodin. [Nejdřív|First] si dělá kávu a čte [noviny|newspaper]. Pak jde do práce [pěšky|on foot], protože [bydlí|she lives] [blízko|near] centra. V práci pracuje na počítači a mluví s [kolegy|colleagues]. [V poledne|At noon] [obědvá|has lunch] v malé restauraci u parku. Má ráda [polévku|soup] a salát. Odpoledne se [vrací|returns] domů a [vaří|cooks] večeři pro svého [manžela|husband]. Večer [spolu|together] [sledují|they watch] film nebo čtou knihu. Eva je ráda, že má [klidný|calm] a [šťastný|happy] život.",
+   quiz:[
+     {q:"V kolik hodin Eva vstává?",opts:["v šest","v sedm","v osm"],a:1,skill:"comprehension"},
+     {q:"Jak Eva jde do práce?",opts:["autem","pěšky","autobusem"],a:1,skill:"vocab-daily"},
+     {q:"Co Eva ráda jí v restauraci?",opts:["polévku a salát","maso a rýži","pizzu"],a:0,skill:"vocab-food"},
+     {q:"Doplň: Eva má [...] a šťastný život.",opts:[],a:["klidný"],type:"fill",skill:"vocab-daily",explain:"<b>klidný</b> = calm / peaceful."}
+   ]},
+  {id:"a2-kavarna",level:"A2",titleCz:"V kavárně",titleEn:"At the café",
+   text:"Petr rád chodí do [kavárny|café] u [nádraží|train station]. Káva tam je výborná a není [drahá|expensive]. Dnes ráno si [sedá|sits down] k oknu a [dívá se|looks] na ulici. Přichází [číšník|waiter] a [ptá se|asks]: „Co si dáte?“ Petr si [dává|orders] velké cappuccino a kousek [dortu|cake]. [Čeká|waits] na kamaráda Tomáše. Tomáš přichází [pozdě|late], protože autobus měl [zpoždění|a delay]. Spolu mluví o práci a o víkendu. Petr [platí|pays] kartou a dává číšníkovi [spropitné|a tip].",
+   quiz:[
+     {q:"Kam Petr rád chodí?",opts:["do kavárny","do kina","do divadla"],a:0,skill:"comprehension"},
+     {q:"Co si Petr dává?",opts:["čaj a chleba","cappuccino a dort","jen vodu"],a:1,skill:"vocab-food"},
+     {q:"Proč přichází Tomáš pozdě? (pozor!)",opts:["zaspal","autobus měl zpoždění","nechtěl přijít"],a:1,skill:"comprehension",trick:true,explain:"Trick: the text never says Tomáš overslept — it says the bus was delayed (<b>autobus měl zpoždění</b>). Pick only what the text actually states."},
+     {q:"Jak Petr platí?",opts:["hotově","kartou","telefonem"],a:1,skill:"comprehension"}
+   ]},
+  {id:"a2-vikend",level:"A2",titleCz:"Víkendové plány",titleEn:"Weekend plans",
+   text:"O víkendu [chce|wants] Lucie [jet|to go] na [výlet|a trip] do hor. Počasí má být krásné, [slunečno|sunny] a teplo. V sobotu ráno vstává [brzy|early] a [balí si|packs] [batoh|backpack]. Bere si vodu, [svačinu|a snack] a teplé [oblečení|clothes]. Její kamarádka Jana jede s ní. [Cesta|The journey] vlakem [trvá|lasts] dvě hodiny. V horách jdou na dlouhou [procházku|walk] a fotí [krajinu|landscape]. Večer se vracejí domů [unavené|tired], ale [spokojené|content].",
+   quiz:[
+     {q:"Kam chce Lucie jet?",opts:["k moři","do hor","do města"],a:1,skill:"vocab-travel"},
+     {q:"Jak dlouho trvá cesta vlakem?",opts:["jednu hodinu","dvě hodiny","celý den"],a:1,skill:"comprehension"},
+     {q:"Co dělají v horách?",opts:["plavou","jdou na procházku a fotí","spí"],a:1,skill:"comprehension"},
+     {q:"Jak se cítí večer?",opts:["smutné","unavené, ale spokojené","nemocné"],a:1,skill:"connectives"}
+   ]},
+  {id:"a2-nakup",level:"A2",titleCz:"Nákup v supermarketu",titleEn:"Shopping",
+   text:"V pátek odpoledne jde Marek do [supermarketu|supermarket]. Doma nemá skoro nic [k jídlu|to eat]. Bere si [vozík|a cart] a začíná u [zeleniny|vegetables]. Kupuje [rajčata|tomatoes], papriky a [brambory|potatoes]. Potom jde k [pečivu|bakery section] a bere si [čerstvý|fresh] chléb. Nesmí [zapomenout|to forget] na mléko, máslo a [vajíčka|eggs]. U [pokladny|checkout] čeká dlouhá [fronta|queue]. Marek platí kartou a dává si nákup do [tašky|a bag].",
+   quiz:[
+     {q:"Kam jde Marek?",opts:["do banky","do supermarketu","do školy"],a:1,skill:"comprehension"},
+     {q:"Co kupuje u zeleniny?",opts:["maso","rajčata a brambory","jen ovoce"],a:1,skill:"vocab-food"},
+     {q:"Co je u pokladny?",opts:["jeho kamarád","dlouhá fronta","velká sleva"],a:1,skill:"comprehension"},
+     {q:"Doplň: Marek platí [...].",opts:[],a:["kartou"],type:"fill",skill:"cases",explain:"<b>kartou</b> = by card (instrumental case — the 'by means of' ending, often -ou/-em)."}
+   ]},
+  {id:"a2-pocasi",level:"A2",titleCz:"Roční období",titleEn:"The seasons",
+   text:"Anna má ráda všechna [roční období|seasons]. Na [jaře|spring] [kvetou|bloom] stromy a je teplo. [Ptáci|Birds] zpívají a dny jsou delší. V [létě|summer] je [horko|hot] a Anna ráda plave v [jezeře|a lake]. Často jí [zmrzlinu|ice cream]. Na [podzim|autumn] padá [listí|leaves] a [fouká|blows] [vítr|wind]. Anna nosí teplý [svetr|sweater]. V [zimě|winter] někdy [sněží|it snows]. Anna staví [sněhuláka|a snowman] a jezdí na [lyžích|skis].",
+   quiz:[
+     {q:"Co dělá Anna v létě?",opts:["staví sněhuláka","plave v jezeře","nosí svetr"],a:1,skill:"comprehension"},
+     {q:"Co se děje na podzim?",opts:["kvetou stromy","padá listí a fouká vítr","je horko"],a:1,skill:"comprehension"},
+     {q:"Co nosí Anna na podzim?",opts:["plavky","teplý svetr","nic"],a:1,skill:"vocab-daily"},
+     {q:"Co dělá v zimě?",opts:["plave","staví sněhuláka a lyžuje","fotí"],a:1,skill:"comprehension"}
+   ]},
+  /* B1 */
+  {id:"b1-byt",level:"B1",titleCz:"Stěhování do nového bytu",titleEn:"Moving to a new flat",
+   text:"Minulý měsíc jsme se s přítelkyní [přestěhovali|moved house] do nového [bytu|flat]. [Hledali jsme|We searched] dlouho, protože v centru jsou byty velmi [drahé|expensive]. [Nakonec|In the end] jsme našli pěkný byt [kousek od|a short way from] parku. Není sice velký, ale má krásný [výhled|view] a hodně světla. První dny byly [náročné|demanding] — museli jsme všechno [vybalit|unpack] a [uklidit|tidy up]. [Sousedé|The neighbours] jsou [přátelští|friendly] a hned nás pozvali na kávu. Myslím, že jsme se [rozhodli|decided] správně.",
+   quiz:[
+     {q:"Proč hledali byt dlouho?",opts:["nebyl čas","byty v centru jsou drahé","nechtěli se stěhovat"],a:1,skill:"comprehension"},
+     {q:"Jaký je nový byt? (pozor)",opts:["velký a tmavý","není velký, ale světlý s výhledem","starý a hlučný"],a:1,skill:"connectives",trick:true,explain:"Trick: <b>není sice velký, ALE…</b> The word <b>ale</b> flips the sentence — it's small yet bright with a view. Don't stop reading at 'small'."},
+     {q:"Jací jsou sousedé?",opts:["nepříjemní","přátelští","tiší"],a:1,skill:"comprehension"},
+     {q:"Doplň minulý čas: „[...] jsme se správně.“ (rozhodnout se)",opts:[],a:["rozhodli","rozhodli jsme se"],type:"fill",skill:"past-tense",explain:"Past tense: <b>rozhodli jsme se</b> = we decided. Participle -li (plural) + helper jsme."}
+   ]},
+  {id:"b1-domov",level:"B1",titleCz:"Práce z domova",titleEn:"Working from home",
+   text:"Už dva roky [pracuji z domova|I work from home] a musím říct, že mi to [vyhovuje|suits me]. [Dřív|Before] jsem každý den [jezdil|used to commute] do [kanceláře|office] a cesta mi [trvala|took] skoro hodinu. Teď mám víc času na rodinu i na své [koníčky|hobbies]. [Samozřejmě|Of course] to má i [nevýhody|disadvantages] — někdy se cítím [osamělý|lonely] a [chybí mi|I miss] kolegové. Proto se [snažím|I try] alespoň jednou týdně [sejít se|meet up] s přáteli. Celkově jsem [spokojený|satisfied] a [nechtěl bych se vrátit|I wouldn't want to go back].",
+   quiz:[
+     {q:"Jak dlouho pracuje z domova?",opts:["půl roku","dva roky","deset let"],a:1,skill:"comprehension"},
+     {q:"Co dělal dřív?",opts:["pracoval z domova","jezdil do kanceláře","nepracoval"],a:1,skill:"past-tense"},
+     {q:"Jaká je nevýhoda?",opts:["málo peněz","cítí se osamělý","dlouhá cesta"],a:1,skill:"comprehension"},
+     {q:"„Nechtěl bych se vrátit“ znamená:",opts:["I must return","I wouldn't want to return","I am returning"],a:1,skill:"conditional",explain:"<b>bych</b> = the 'would' marker. <b>nechtěl bych</b> = I wouldn't want to."}
+   ]},
+  {id:"b1-dovolena",level:"B1",titleCz:"Dovolená u moře",titleEn:"A holiday by the sea",
+   text:"Loni v létě jsme [jeli|went] na [dovolenou|holiday] k [moři|the sea] do Chorvatska. [Cestovali jsme|We travelled] autem a cesta [trvala|lasted] skoro celý den. [Ubytovali jsme se|We stayed] v malém penzionu blízko [pláže|the beach]. Každé ráno jsme [plavali|swam] v čistém moři a [opalovali se|sunbathed]. K obědu jsme zkoušeli [místní|local] jídla, hlavně [čerstvé|fresh] ryby. Jednou jsme si [půjčili|rented] loď a jeli na malý [ostrov|island]. Počasí nám [přálo|was kind to us], jen poslední den [pršelo|it rained].",
+   quiz:[
+     {q:"Kam jeli na dovolenou?",opts:["do hor","k moři do Chorvatska","do velkého města"],a:1,skill:"vocab-travel"},
+     {q:"Jak cestovali?",opts:["letadlem","autem","vlakem"],a:1,skill:"past-tense"},
+     {q:"Jaké bylo počasí? (pozor)",opts:["celou dobu pršelo","dobré, jen poslední den pršelo","byla zima"],a:1,skill:"comprehension",trick:true,explain:"Trick: it rained only on the last day. <b>jen poslední den pršelo</b> — the word <b>jen</b> (only) limits it. Easy to misread as 'it rained the whole time'."},
+     {q:"Doplň: „[...] jsme si loď.“ (půjčit si, minulý čas)",opts:[],a:["půjčili","půjčili jsme si"],type:"fill",skill:"past-tense",explain:"<b>půjčili jsme si</b> = we rented/borrowed. Reflexive <b>si</b> stays with the verb."}
+   ]},
+  /* B2 */
+  {id:"b2-mesto",level:"B2",titleCz:"Město, nebo venkov?",titleEn:"City or countryside?",
+   text:"Často [přemýšlím|I think about] o tom, jestli je lepší bydlet ve městě, nebo na venkově. Ve městě je [nepochybně|undoubtedly] víc [příležitostí|opportunities] — práce, kultura a dobrá [doprava|transport]. [Na druhou stranu|On the other hand] je tam [hluk|noise], spěch a všechno je dražší. Venkov [nabízí|offers] klid, čistý [vzduch|air] a blízkost [přírody|nature], ale chybí tam [pohodlí|comfort], na které jsme [zvyklí|used to]. Kdybych si měl vybrat, asi bych [dal přednost|would prefer] menšímu městu, které spojuje výhody obojího. Nakonec [záleží|it depends] spíš na lidech kolem nás než na tom, kde žijeme.",
+   quiz:[
+     {q:"Co nabízí venkov podle autora?",opts:["víc práce a kultury","klid, čistý vzduch a přírodu","levné restaurace"],a:1,skill:"comprehension"},
+     {q:"Co by si autor nakonec vybral? (pozor)",opts:["velké město","venkov","menší město"],a:2,skill:"conditional",trick:true,explain:"Trick: he opens by praising the city, but with <b>kdybych si měl vybrat</b> (if I had to choose) he actually picks a smaller town. The conditional reveals his real choice — read to the end."},
+     {q:"„Dát přednost“ znamená:",opts:["to refuse","to prefer","to postpone"],a:1,skill:"vocab-abstract"},
+     {q:"Doplň: „Na druhou [...], je tam hluk.“ (idiom)",opts:[],a:["stranu"],type:"fill",skill:"connectives",explain:"<b>na druhou stranu</b> = on the other hand. A fixed phrase — learn it whole."}
+   ]},
+  {id:"b2-site",level:"B2",titleCz:"Sociální sítě",titleEn:"Social media",
+   text:"Sociální sítě se staly [nedílnou součástí|an integral part] našeho života, ať se nám to líbí, nebo ne. [Umožňují|They allow] nám zůstat v kontaktu s přáteli. [Zároveň|At the same time] však mohou být [návykové|addictive] a [krást|steal] nám čas. Mnozí lidé [srovnávají|compare] svůj život s [dokonalými|perfect] obrázky ostatních a cítí se pak hůř. [Podle mého názoru|In my opinion] není problém v samotných sítích, ale v tom, jak je [používáme|we use them]. Kdybychom je používali [s mírou|in moderation], mohly by spíš pomáhat než [škodit|harm]. Klíčové je nezapomínat na svět mimo [obrazovku|the screen].",
+   quiz:[
+     {q:"Jaký je hlavní názor autora?",opts:["sítě jsou jednoznačně špatné","problém je v tom, jak je používáme","sítě nemají žádné nevýhody"],a:1,skill:"comprehension"},
+     {q:"„Návykový“ znamená:",opts:["expensive","addictive","useful"],a:1,skill:"vocab-abstract"},
+     {q:"Co by se stalo, kdybychom je používali s mírou?",opts:["mohly by pomáhat","přestaly by fungovat","byly by dražší"],a:0,skill:"conditional"},
+     {q:"Doplň: „Podle mého [...], problém není v sítích.“ (in my opinion)",opts:[],a:["názoru"],type:"fill",skill:"vocab-abstract",explain:"<b>podle mého názoru</b> = in my opinion. Useful for stating any opinion."}
+   ]},
+  /* C1 */
+  {id:"c1-ai",level:"C1",titleCz:"Umělá inteligence a práce",titleEn:"AI and the future of work",
+   text:"Rozvoj [umělé inteligence|artificial intelligence] [vyvolává|raises] čím dál častěji otázku, jak bude vypadat budoucnost práce. Někteří se [obávají|fear], že stroje [nahradí|will replace] lidi a [připraví je o|deprive them of] zaměstnání. Jiní naopak [tvrdí|claim], že nové technologie vždy vytvořily víc pracovních míst, než kolik jich [zaniklo|disappeared]. Pravda bude [zřejmě|probably] někde uprostřed. Je téměř jisté, že řada profesí projde [proměnou|a transformation] a že se budeme muset neustále učit novým [dovednostem|skills]. Místo abychom se technologií [báli|feared], měli bychom se naučit je využívat ve svůj [prospěch|benefit]. Schopnost [přizpůsobit se|to adapt] změnám provází lidstvo [od nepaměti|since time immemorial].",
+   quiz:[
+     {q:"Jaký je pravděpodobný závěr autora?",opts:["stroje zničí všechnu práci","pravda je někde uprostřed","technologie nemají žádný vliv"],a:1,skill:"comprehension"},
+     {q:"„Připravit někoho o práci“ znamená: (pozor)",opts:["to prepare someone for work","to deprive someone of work","to promote someone"],a:1,skill:"vocab-idiom",trick:true,explain:"False friend! <b>připravit O něco</b> = to deprive of something, NOT 'to prepare'. The preposition <b>o</b> changes everything."},
+     {q:"„Místo abychom se báli“ vyjadřuje:",opts:["a command","instead of fearing","the past"],a:1,skill:"grammar-clauses",explain:"<b>místo aby</b> = instead of (doing). It sets up an alternative to the action."},
+     {q:"Doplň: „využívat ve svůj [...].“ (benefit)",opts:[],a:["prospěch"],type:"fill",skill:"vocab-abstract",explain:"<b>ve svůj prospěch</b> = to one's own benefit."}
+   ]},
+  {id:"c1-knihy",level:"C1",titleCz:"Knihy versus filmy",titleEn:"Books vs. films",
+   text:"Věčná debata o tom, [zda|whether] jsou lepší knihy, nebo jejich filmové [adaptace|adaptations], asi nikdy [neutichne|won't die down]. [Zastánci|Advocates] knih [argumentují|argue] tím, že kniha nechává [prostor|room] fantazii a umožňuje hlubší [ponoření|immersion] do příběhu. Filmoví [nadšenci|enthusiasts] naproti tomu [oceňují|appreciate] vizuální [zážitek|experience]. Osobně si myslím, že obě formy mají své [kouzlo|charm] a nelze je jednoduše [srovnávat|compare]. Dobrá adaptace dokáže knihu [obohatit|enrich], zatímco špatná ji může [nenávratně|irreversibly] pokazit. Podstatné je, že nás příběh dokáže [pohltit|engross] a něco v nás [zanechat|leave behind].",
+   quiz:[
+     {q:"Jaký názor zastává autor?",opts:["knihy jsou vždy lepší","obě formy mají své kouzlo","filmy jsou ztráta času"],a:1,skill:"comprehension"},
+     {q:"„Pohltit“ zde znamená:",opts:["to bore","to engross / absorb","to translate"],a:1,skill:"vocab-idiom"},
+     {q:"Co dokáže špatná adaptace?",opts:["obohatit knihu","nenávratně ji pokazit","zvýšit prodej knihy"],a:1,skill:"comprehension"},
+     {q:"Doplň: „Kniha nechává [...] fantazii.“ (room)",opts:[],a:["prostor"],type:"fill",skill:"vocab-abstract",explain:"<b>nechat prostor</b> = to leave room/space (for)."}
+   ]}
+];
+
+const LEVELS=["A1","A2","B1","B2","C1"];
+const LEARNER="Natasha";
+const LEVEL_NAMES={A1:"beginner",A2:"elementary",B1:"intermediate",B2:"upper-intermediate",C1:"advanced"};
+const LEVEL_COLOR={A1:["#3F9794","#E1F0EF"],A2:["#E0A93B","#FBF0D8"],B1:["#C8443F","#F8E5E4"],B2:["#7B4EA3","#EEE7F5"],C1:["#34507A","#E4EAF3"]};
+const XP_PER_CORRECT={A1:10,A2:15,B1:20,B2:25,C1:30};
+
+/* ===== STATE ===== */
+const DEFAULTS={level:"A2",xp:0,streak:0,lastDate:null,stars:{},recent:{A1:[],A2:[],B1:[],B2:[],C1:[]},miss:{},seen:{}};
+let S=JSON.parse(JSON.stringify(DEFAULTS));
+function load(){try{const r=localStorage.getItem("czQuest");if(r)S=Object.assign(JSON.parse(JSON.stringify(DEFAULTS)),JSON.parse(r));}catch(e){}}
+function save(){try{localStorage.setItem("czQuest",JSON.stringify(S));}catch(e){}}
+
+/* ===== HELPERS ===== */
+function applyLevelColor(){const c=LEVEL_COLOR[S.level]||LEVEL_COLOR.A2;document.documentElement.style.setProperty("--lvl",c[0]);document.documentElement.style.setProperty("--lvl-tint",c[1]);}
+function plainText(t){return t.replace(/\[([^|\]]+)\|[^\]]+\]/g,"$1");}
+function renderStory(t){return t.replace(/\[([^|\]]+)\|([^\]]+)\]/g,(m,cz,en)=>`<span class="gloss">${cz}<span class="pop">${en}</span></span>`);}
+function buildGlossary(t){const out=[],seen=new Set();t.replace(/\[([^|\]]+)\|([^\]]+)\]/g,(m,cz,en)=>{const k=cz.toLowerCase();if(!seen.has(k)){seen.add(k);out.push([cz,en]);}return m;});return out;}
+function starString(n){let s="";for(let i=0;i<3;i++)s+=i<n?"★":'<span class="off">★</span>';return s;}
+function norm(s){return (s||"").toLowerCase().trim().replace(/[.,!?;:„“"]/g,"").replace(/\s+/g," ");}
+function show(id){["home","reading","quiz","lesson","results"].forEach(x=>document.getElementById(x).classList.toggle("hidden",x!==id));}
+
+/* ===== HUD + HOME ===== */
+function renderHud(){applyLevelColor();document.getElementById("hudLevel").textContent=S.level+" ⚙";document.getElementById("hudStreak").innerHTML=`🔥 ${S.streak}<small>${S.streak===1?"den":"dnů"}</small>`;document.getElementById("hudXp").innerHTML=`★ ${S.xp}<small>XP</small>`;}
+function strongRounds(){return (S.recent[S.level]||[]).filter(a=>a>=0.85).length;}
+function weakSkills(){return Object.keys(S.miss).filter(k=>S.miss[k]>=2);}
+
+function renderHome(){
+  renderHud();
+  const hour=new Date().getHours();
+  const greet=hour<11?"Dobré ráno":hour<18?"Ahoj":"Dobrý večer";
+  const sub=S.streak>1?`Day ${S.streak} in a row — keep it going. 🔥`:(S.xp>0?"Welcome back — let's keep learning Czech.":"Let's learn some Czech together.");
+  document.getElementById("welcome").innerHTML=`<div class="hi">${greet}, ${LEARNER} 👋</div><div class="sub">${sub}</div>`;
+
+  // review / weak spots
+  const weak=weakSkills();
+  const rb=document.getElementById("reviewBox");
+  if(weak.length){
+    rb.innerHTML=`<div class="review"><h3>🎯 Slabá místa · Review</h3><div class="desc">Things to shore up, based on what's been missed. A quick lesson + targeted practice each.</div>${
+      weak.map(k=>`<div class="weakrow"><div class="wn">${SKILLS[k].name}<small>missed ${S.miss[k]}×</small></div><button class="btn small" style="background:var(--gold)" onclick="openLesson('${k}')">Procvičit</button></div>`).join("")
+    }</div>`;
+  } else rb.innerHTML="";
+
+  document.getElementById("lvlTitle").textContent=`Úroveň ${S.level} · ${LEVEL_NAMES[S.level]}`;
+  const idx=LEVELS.indexOf(S.level), top=idx>=LEVELS.length-1;
+  document.getElementById("lvlGoal").textContent=top?"nejvyšší úroveň":"3× 85 %+ → výš";
+  const sr=Math.min(strongRounds(),3);let dots="";for(let i=0;i<3;i++)dots+=`<div class="dot ${i<sr?'on':''}"></div>`;
+  document.getElementById("lvlDots").innerHTML=dots;
+  document.getElementById("lvlHint").textContent=top?"Top level for now — keep her sharp, and the review section coaches weak spots.":`Strong rounds: ${sr}/3. Score 85%+ three times to reach ${LEVELS[idx+1]}.`;
+
+  const list=STORIES.filter(s=>s.level===S.level);
+  document.getElementById("storyList").innerHTML=list.map((s,i)=>{
+    const st=S.stars[s.id]||0,done=S.stars.hasOwnProperty(s.id);
+    return `<div class="story-card ${done?'done':''}" onclick="openStory('${s.id}')"><div class="story-num">${done?'✓':i+1}</div><div class="story-meta"><div class="t">${s.titleCz}</div><div class="e">${s.titleEn}</div></div><div class="stars">${starString(st)}</div></div>`;
+  }).join("");
+  document.getElementById("footer").classList.add("hidden");
+}
+function goHome(){if(window.speechSynthesis)speechSynthesis.cancel();mode="story";show("home");renderHome();}
+
+/* ===== READING ===== */
+let current=null, mode="story", practiceSkill=null;
+function openStory(id){
+  mode="story";
+  current=STORIES.find(s=>s.id===id);
+  document.getElementById("rTitle").textContent=current.titleCz;
+  document.getElementById("rSub").textContent=current.titleEn;
+  document.getElementById("rBody").innerHTML=renderStory(current.text);
+  document.getElementById("rGloss").innerHTML=buildGlossary(current.text).map(([cz,en])=>`<div class="gi"><span class="cz">${cz}</span><span class="en">${en}</span></div>`).join("");
+  bindGlosses();show("reading");
+  const f=document.getElementById("footer");f.classList.remove("hidden");
+  const b=document.getElementById("footerBtn");b.textContent="Spustit kvíz · Start quiz";b.onclick=startQuiz;
+  document.getElementById("reading").scrollTop=0;
+}
+function bindGlosses(){document.querySelectorAll("#rBody .gloss").forEach(g=>{g.onclick=(e)=>{const w=g.classList.contains("active");document.querySelectorAll(".gloss.active").forEach(x=>x.classList.remove("active"));if(!w)g.classList.add("active");e.stopPropagation();};});}
+document.body.addEventListener("click",()=>document.querySelectorAll(".gloss.active").forEach(x=>x.classList.remove("active")));
+function speak(rate){
+  if(!("speechSynthesis" in window)){document.getElementById("rTip").textContent="Read-aloud isn't supported here.";return;}
+  speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(plainText(current.text));u.lang="cs-CZ";u.rate=rate;
+  const cz=speechSynthesis.getVoices().find(v=>v.lang&&v.lang.toLowerCase().startsWith("cs"));
+  if(cz)u.voice=cz;else document.getElementById("rTip").textContent="No Czech voice on this device yet — add one in Settings ▸ Accessibility ▸ Spoken Content for correct pronunciation.";
+  speechSynthesis.speak(u);
+}
+if("speechSynthesis" in window)speechSynthesis.onvoiceschanged=()=>{};
+
+/* ===== QUIZ ===== */
+let qIndex=0,qCorrect=0,qLocked=false,qResults=[];
+function startQuiz(){if(window.speechSynthesis)speechSynthesis.cancel();qIndex=0;qCorrect=0;qResults=[];show("quiz");document.getElementById("footer").classList.add("hidden");renderQuestion();}
+function renderQuestion(){
+  qLocked=false;
+  const item=current.quiz[qIndex],total=current.quiz.length;
+  let bars="";for(let i=0;i<total;i++)bars+=`<div class="qbar ${i<=qIndex?'on':''}"></div>`;
+  document.getElementById("qProgress").innerHTML=bars;
+  document.getElementById("qCount").textContent=`OTÁZKA ${qIndex+1} / ${total}`;
+  document.getElementById("qText").textContent=item.q;
+  document.getElementById("qFeedback").textContent="";document.getElementById("qFeedback").className="qfeedback";
+  document.getElementById("qExplain").innerHTML="";
+  if(item.type==="fill"){
+    document.getElementById("qOpts").innerHTML=`<input id="fillIn" class="fill" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="napiš slovo…"><button class="btn" style="margin-top:12px" onclick="submitFill()">Zkontrolovat · Check</button>`;
+    const inp=document.getElementById("fillIn");inp.addEventListener("keydown",e=>{if(e.key==="Enter")submitFill();});setTimeout(()=>inp.focus(),100);
+  } else {
+    document.getElementById("qOpts").innerHTML=item.opts.map((o,i)=>`<button class="opt" onclick="answer(${i})">${o}</button>`).join("");
+  }
+  document.getElementById("quiz").scrollTop=0;
+}
+function record(item,correct){qResults.push({skill:item.skill||"comprehension",correct});if(correct)qCorrect++;}
+function afterAnswer(item,correct){
+  const ex=document.getElementById("qExplain");
+  if(item.explain && (item.trick || !correct)) ex.innerHTML=`<div class="explain-box">💡 ${item.explain}</div>`;
+  else if(item.trick) ex.innerHTML=`<div class="explain-box">💡 Trick question — nicely handled.</div>`;
+  const f=document.getElementById("footer");f.classList.remove("hidden");
+  const b=document.getElementById("footerBtn");
+  if(qIndex<current.quiz.length-1){b.textContent="Další · Next";b.onclick=nextQuestion;}
+  else{b.textContent="Hotovo · Finish";b.onclick=finishQuiz;}
+}
+function answer(i){
+  if(qLocked)return;qLocked=true;
+  const item=current.quiz[qIndex];
+  document.querySelectorAll("#qOpts .opt").forEach((b,bi)=>{b.disabled=true;if(bi===item.a)b.classList.add("correct");if(bi===i&&i!==item.a)b.classList.add("wrong");});
+  const ok=i===item.a,fb=document.getElementById("qFeedback");
+  if(ok){fb.textContent="Správně! ✓";fb.className="qfeedback ok";}else{fb.textContent="Skoro — správně je zelená.";fb.className="qfeedback no";}
+  record(item,ok);afterAnswer(item,ok);
+}
+function submitFill(){
+  if(qLocked)return;qLocked=true;
+  const item=current.quiz[qIndex],inp=document.getElementById("fillIn");
+  const ok=item.a.map(norm).includes(norm(inp.value));
+  inp.disabled=true;inp.classList.add(ok?"ok":"bad");
+  document.querySelector("#qOpts .btn").disabled=true;
+  const fb=document.getElementById("qFeedback");
+  if(ok){fb.textContent="Správně! ✓";fb.className="qfeedback ok";}else{fb.textContent=`Skoro — správně: „${item.a[0]}"`;fb.className="qfeedback no";}
+  record(item,ok);afterAnswer(item,ok);
+}
+function nextQuestion(){qIndex++;document.getElementById("footer").classList.add("hidden");renderQuestion();}
+
+/* ===== RESULTS + ENGINE ===== */
+function finishQuiz(){
+  const total=current.quiz.length,acc=qCorrect/total;
+  // update skill seen/miss from this quiz
+  qResults.forEach(r=>{S.seen[r.skill]=(S.seen[r.skill]||0)+1;if(!r.correct)S.miss[r.skill]=(S.miss[r.skill]||0)+1;});
+  if(mode==="practice"){
+    S.xp+=qCorrect*10;
+    if(acc>=0.7){delete S.miss[practiceSkill];} else {S.miss[practiceSkill]=2;}
+    save();renderResults({acc,stars:acc>=1?3:acc>=0.66?2:acc>=0.33?1:0,gained:qCorrect*10,move:null,prevLevel:S.level,practice:true});
+    return;
+  }
+  const stars=acc>=1?3:acc>=0.66?2:acc>=0.33?1:0;
+  let gained=qCorrect*XP_PER_CORRECT[S.level];if(acc>=1)gained+=25;S.xp+=gained;
+  S.stars[current.id]=Math.max(S.stars[current.id]||0,stars);
+  const today=new Date().toDateString();
+  if(S.lastDate!==today){const y=new Date(Date.now()-864e5).toDateString();S.streak=(S.lastDate===y)?S.streak+1:1;S.lastDate=today;}
+  const lvl=S.level;if(!S.recent[lvl])S.recent[lvl]=[];S.recent[lvl].push(acc);if(S.recent[lvl].length>3)S.recent[lvl].shift();
+  let move=null;const idx=LEVELS.indexOf(lvl);
+  if(S.recent[lvl].length>=3){const avg=S.recent[lvl].reduce((a,b)=>a+b,0)/S.recent[lvl].length;
+    if(avg>=0.85&&idx<LEVELS.length-1){S.level=LEVELS[idx+1];S.recent[S.level]=[];move="up";}
+    else if(avg<0.45&&idx>0){S.level=LEVELS[idx-1];S.recent[S.level]=[];move="down";}}
+  // top missed skill from this quiz, for an instant lesson
+  const missedNow=qResults.filter(r=>!r.correct).map(r=>r.skill);
+  const topMissed=missedNow.length?missedNow[0]:null;
+  save();renderResults({acc,stars,gained,move,prevLevel:lvl,topMissed});
+}
+function renderResults({acc,stars,gained,move,prevLevel,topMissed,practice}){
+  applyLevelColor();renderHud();
+  const pct=Math.round(acc*100);
+  const ring=stars===3?"🏆":stars===2?"🎉":stars===1?"👍":"📖";
+  let banner="";
+  if(move==="up")banner=`<div class="banner up">⬆ Level up, ${LEARNER}! You're improving — moving from ${prevLevel} to ${S.level}.</div>`;
+  if(move==="down")banner=`<div class="banner down">↺ No worries, ${LEARNER} — easing back to ${S.level} to lock in the basics.</div>`;
+  let lesson="";
+  if(topMissed&&SKILLS[topMissed]){lesson=`<div class="lessoncall"><h4>📘 Quick lesson · ${SKILLS[topMissed].name}</h4><p>${SKILLS[topMissed].lesson}</p><button class="btn small" style="background:var(--gold)" onclick="openLesson('${topMissed}')">Procvičit toto · Practice this</button></div>`;}
+  const msgs=[`Zkus to znovu, ${LEARNER} — every read makes the next one click.`,`Dobrý začátek, ${LEARNER}! Review the glossary and run it again.`,`Pěkně, ${LEARNER}! Strong comprehension.`,`Výborně, ${LEARNER}! Perfect round. 🎉`];
+  document.getElementById("results").innerHTML=`<div class="result"><div class="ring">${ring}</div><h1>${pct}%</h1><div class="bigstars">${starString(stars)}</div><p>${practice?`Procvičování hotovo, ${LEARNER}!`:msgs[stars]}</p>${banner}${lesson}<div class="rewards"><div class="reward"><div class="v" style="color:var(--gold)">+${gained}</div><div class="l">XP</div></div><div class="reward"><div class="v">🔥 ${S.streak}</div><div class="l">streak</div></div></div></div>`;
+  show("results");
+  const f=document.getElementById("footer");f.classList.remove("hidden");
+  const b=document.getElementById("footerBtn");b.textContent="Domů · Home";b.onclick=goHome;
+}
+
+/* ===== LESSONS + TARGETED PRACTICE ===== */
+function openLesson(skill){
+  practiceSkill=skill;
+  document.getElementById("lessonTitle").textContent=SKILLS[skill].name;
+  document.getElementById("lessonSub").textContent="Mini-lekce · Mini-lesson";
+  document.getElementById("lessonBody").innerHTML=SKILLS[skill].lesson;
+  show("lesson");
+  const f=document.getElementById("footer");f.classList.remove("hidden");
+  const b=document.getElementById("footerBtn");
+  const pool=skillPool(skill);
+  b.textContent=pool.length?`Procvičit (${Math.min(pool.length,5)} otázek) · Practice`:"Domů · Home";
+  b.onclick=pool.length?()=>startPractice(skill):goHome;
+}
+function skillPool(skill){
+  const pool=[];STORIES.forEach(s=>s.quiz.forEach(q=>{if((q.skill||"comprehension")===skill)pool.push(q);}));return pool;
+}
+function startPractice(skill){
+  mode="practice";practiceSkill=skill;
+  let pool=skillPool(skill).slice();
+  for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}
+  pool=pool.slice(0,5);
+  current={titleCz:"Procvičování",titleEn:SKILLS[skill].name,quiz:pool,practice:true};
+  startQuiz();
+}
+
+/* ===== SETTINGS ===== */
+function openSettings(){
+  document.getElementById("lvlPicker").innerHTML=LEVELS.map(l=>`<div class="lvlbtn ${l===S.level?'sel':''}" data-l="${l}" onclick="pickLevel('${l}')">${l}</div>`).join("");
+  document.getElementById("scrim").classList.add("show");
+}
+function closeSettings(){document.getElementById("scrim").classList.remove("show");}
+function pickLevel(l){S.level=l;save();document.querySelectorAll(".lvlbtn").forEach(b=>b.classList.toggle("sel",b.dataset.l===l));renderHome();}
+function resetAll(){S=JSON.parse(JSON.stringify(DEFAULTS));save();closeSettings();renderHome();}
+document.getElementById("scrim").addEventListener("click",e=>{if(e.target.id==="scrim")closeSettings();});
+
+/* ===== BOOT ===== */
+load();renderHome();
+</script>
+</body>
+</html>
