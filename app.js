@@ -82,7 +82,9 @@ function buildGlossary(t){
   return out;
 }
 function starString(n){ let s=""; for(let i=0;i<3;i++) s += i<n ? "★" : '<span class="off">★</span>'; return s; }
-function norm(s){ return (s||"").toLowerCase().trim().replace(/[.,!?;:„“"]/g,"").replace(/\s+/g," "); }
+/* Accent-insensitive: strips diacritics so "vysetril" still matches "vyšetřil".
+   The feedback still SHOWS the correctly-accented answer, so she learns the spelling. */
+function norm(s){ return (s||"").toLowerCase().trim().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[.,!?;:„“"]/g,"").replace(/\s+/g," "); }
 function todayKey(){ return new Date().toDateString(); }
 function levelIdx(l){ return LEVELS.indexOf(l); }
 function storiesAt(l){ return STORIES.filter(s=>s.level===l).sort((a,b)=>(a.diff||0)-(b.diff||0)); }
@@ -154,8 +156,9 @@ function confetti(){
 }
 
 /* ===== HUD + HOME ===== */
+function rollDay(){ if(S.dayKey!==todayKey()){ S.dayKey=todayKey(); S.dayXp=0; } }
 function dailyRing(){
-  if(S.dayKey!==todayKey()){ S.dayKey=todayKey(); S.dayXp=0; }
+  rollDay();
   const pct=Math.min(1, S.dayXp/DAILY_GOAL_XP);
   const r=13, circ=2*Math.PI*r, off=circ*(1-pct);
   return `<svg class="ring" viewBox="0 0 32 32" aria-hidden="true">
@@ -401,7 +404,7 @@ function finishQuiz(){
   save();
   renderResults({ acc, stars, gained, move, prevLevel:lvl, topMissed, newBadges });
 }
-function bumpDay(x){ if(S.dayKey!==todayKey()){ S.dayKey=todayKey(); S.dayXp=0; } S.dayXp+=x; }
+function bumpDay(x){ rollDay(); S.dayXp+=x; }
 
 function renderResults({acc,stars,gained,move,prevLevel,topMissed,newBadges,special}){
   applyLevelColor(); renderHud();
@@ -531,11 +534,17 @@ function placeAnswer(i){
   setTimeout(()=>{ placeIdx++; renderPlacement(); }, 650);
 }
 function finishPlacement(){
-  // highest level where she got the representative question(s) right
-  const correctByLevel={}; placeQs.forEach((q,idx)=>{}); // placeScore already aggregates
+  // Walk levels upward; she "clears" a level only by getting ALL its questions
+  // right. Stop at the first level she doesn't fully clear, and place her there.
+  // This avoids over-placing a lucky guesser (one fluked C1 answer no longer
+  // vaults her to C1). The adaptive engine bumps her up quickly if under-placed.
+  const total={}; placeQs.forEach(q=>{ total[q._level]=(total[q._level]||0)+1; });
   let best="A1";
-  ["A1","A2","B1","B2","C1"].forEach(l=>{ if((placeScore[l]||0)>0) best=l; });
-  // if she nailed C1 questions, start her at C1; engine moves to C2 on boss
+  for(const l of ["A1","A2","B1","B2","C1"]){
+    if(!total[l]) continue;
+    if((placeScore[l]||0) >= total[l]) best=l;  // cleared every question at this level
+    else break;                                  // first stumble → stop here
+  }
   S.level=best; S.placed=true; save();
   mascot("celebrate",`Začneme na úrovni ${best}! 🎯`, true);
   confetti();
