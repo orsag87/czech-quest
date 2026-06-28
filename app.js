@@ -88,13 +88,13 @@ function norm(s){ return (s||"").toLowerCase().trim().normalize("NFD").replace(/
 function todayKey(){ return new Date().toDateString(); }
 function levelIdx(l){ return LEVELS.indexOf(l); }
 function storiesAt(l){ return STORIES.filter(s=>s.level===l).sort((a,b)=>(a.diff||0)-(b.diff||0)); }
-const VIEWS = ["home","reading","quiz","lesson","results","placement"];
+const VIEWS = ["home","reading","quiz","lesson","results","placement","match"];
 function show(id){ VIEWS.forEach(v=>document.getElementById(v).classList.toggle("hidden", v!==id)); }
 
 /* ===== VOCAB / SRS ===== */
 function enrollWord(cz, box){
   const info = VOCAB_INDEX[cz]; if(!info) return;
-  if(!S.vocab[cz]){ S.vocab[cz] = { en:info.en, box:box||0, due:Date.now()+LEITNER_DAYS[box||0]*864e5, reps:0, correct:0, wrong:0 }; }
+  if(!S.vocab[cz]){ S.vocab[cz] = { en:info.en, box:box||0, due:Date.now()+LEITNER_DAYS[box||0]*864e5, reps:0, correct:0, wrong:0, added:Date.now() }; }
 }
 function reviewWord(cz, correct){
   const v = S.vocab[cz]; if(!v) return;
@@ -210,6 +210,11 @@ function renderHome(){
     }</div>`;
   }
   document.getElementById("reviewBox").innerHTML = cards;
+
+  // always-available practice: word match
+  document.getElementById("practiceBox").innerHTML = matchAvailable()
+    ? `<div class="review practice"><h3>🃏 Spojování slovíček · Word match</h3><div class="desc">Quick recap — match recent Czech words to their English. Jump in anytime.</div><button class="btn small" style="background:var(--lvl)" onclick="startMatch()">Hrát · Play</button></div>`
+    : "";
 
   // level card
   document.getElementById("lvlTitle").textContent = `Úroveň ${S.level} · ${LEVEL_NAMES[S.level]}`;
@@ -425,6 +430,7 @@ function renderResults({acc,stars,gained,move,prevLevel,topMissed,newBadges,spec
   const msgs=[`Zkus to znovu, ${LEARNER} — every read makes the next one click.`,`Dobrý začátek, ${LEARNER}! Review the glossary and run it again.`,`Pěkně, ${LEARNER}! Strong comprehension.`,`Výborně, ${LEARNER}! Perfect round. 🎉`];
   let headline = special==="srs" ? `Opakování hotovo, ${LEARNER}!`
               : special==="practice" ? `Procvičování hotovo, ${LEARNER}!`
+              : special==="match" ? `Spojování hotovo, ${LEARNER}!`
               : msgs[stars];
 
   document.getElementById("results").innerHTML=`<div class="result"><div class="ring">${ring}</div><h1>${pct}%</h1><div class="bigstars">${starString(stars)}</div><p>${headline}</p>${banner}${badgeHtml}${lesson}<div class="rewards"><div class="reward"><div class="v" style="color:var(--gold)">+${gained}</div><div class="l">XP</div></div><div class="reward"><div class="v">🔥 ${S.streak}</div><div class="l">streak</div></div></div></div>`;
@@ -467,6 +473,110 @@ function startSrs(){
   if(!quiz.length){ goHome(); return; }
   current={ titleCz:"Opakování slovíček", titleEn:"Word review", quiz };
   startQuiz();
+}
+
+/* ===== WORD MATCH (tap-to-match vocab recap) =====
+   6 Czech buttons on the left, 6 English on the right (each column independently
+   shuffled). Tap a Czech word then its English match. Correct = both lock green and
+   the word gets a spaced-repetition credit. Pulls her most-recently-learned words first. */
+let matchBoards=[], matchBoardIdx=0, matchPairs=[], matchLeft=[], matchRight=[],
+    selL=null, selR=null, matchLock=false, matchedThisBoard=0,
+    matchClean=0, matchTotal=0, matchDirty=new Set();
+
+function matchEnFor(cz){ return (S.vocab[cz]&&S.vocab[cz].en) || (VOCAB_INDEX[cz]&&VOCAB_INDEX[cz].en) || ""; }
+function recentVocab(limit){
+  // most-recently-learned first; top up from the current level's stories if she's new
+  let keys=Object.keys(S.vocab).filter(cz=>matchEnFor(cz));
+  keys.sort((a,b)=>(S.vocab[b].added||0)-(S.vocab[a].added||0) || (S.vocab[a].due-S.vocab[b].due));
+  let pool=keys.slice(0,limit);
+  if(pool.length<6){
+    const seen=new Set(pool);
+    storiesAt(S.level).forEach(s=>buildGlossary(s.text).forEach(([cz])=>{ if(!seen.has(cz)&&VOCAB_INDEX[cz]){ seen.add(cz); pool.push(cz); } }));
+    pool=pool.slice(0,Math.max(6,limit));
+  }
+  return pool;
+}
+function matchAvailable(){ return recentVocab(18).length>=4; }
+
+function startMatch(){
+  if(window.speechSynthesis) speechSynthesis.cancel();
+  mode="match";
+  const pool=shuffle(recentVocab(18));
+  if(pool.length<4){ goHome(); return; }
+  matchBoards=[]; for(let i=0;i<pool.length;i+=6) matchBoards.push(pool.slice(i,i+6));
+  // don't leave a lonely 1-word final board
+  if(matchBoards.length>1 && matchBoards[matchBoards.length-1].length===1){
+    matchBoards[matchBoards.length-2]=matchBoards[matchBoards.length-2].concat(matchBoards.pop());
+  }
+  matchBoardIdx=0; matchClean=0; matchTotal=0;
+  show("match"); document.getElementById("footer").classList.add("hidden");
+  renderMatchBoard();
+  mascot("idle","");
+}
+function renderMatchBoard(){
+  matchLock=false; selL=null; selR=null; matchedThisBoard=0; matchDirty=new Set();
+  matchPairs=matchBoards[matchBoardIdx].map(cz=>({cz, en:matchEnFor(cz)}));
+  matchLeft=shuffle(matchPairs.map(p=>p.cz));
+  matchRight=shuffle(matchPairs.map(p=>p.en));
+  document.getElementById("match").innerHTML=`
+    <div class="topnav"><button class="back" onclick="goHome()">‹ Zpět</button></div>
+    <div class="qcount" id="mCount"></div>
+    <div class="mtip">Spoj slovo s překladem · Tap a Czech word, then its English match.</div>
+    <div class="cols">
+      <div class="mcol cz">${matchLeft.map((cz,i)=>`<button class="mbtn" id="L${i}" onclick="matchTap('L',${i})">${cz}</button>`).join("")}</div>
+      <div class="mcol en">${matchRight.map((en,i)=>`<button class="mbtn" id="R${i}" onclick="matchTap('R',${i})">${en}</button>`).join("")}</div>
+    </div>`;
+  updateMatchCount();
+  document.getElementById("match").scrollTop=0;
+}
+function updateMatchCount(){
+  document.getElementById("mCount").textContent=`KOLO ${matchBoardIdx+1}/${matchBoards.length} · ${matchedThisBoard}/${matchPairs.length}`;
+}
+function matchTap(side,i){
+  if(matchLock) return;
+  const btn=document.getElementById(side+i);
+  if(!btn || btn.classList.contains("matched")) return;
+  if(side==="L"){ if(selL!=null) document.getElementById("L"+selL).classList.remove("sel"); selL=i; }
+  else { if(selR!=null) document.getElementById("R"+selR).classList.remove("sel"); selR=i; }
+  btn.classList.add("sel");
+  if(selL!=null && selR!=null) evalMatch();
+}
+function evalMatch(){
+  const cz=matchLeft[selL], en=matchRight[selR];
+  const lb=document.getElementById("L"+selL), rb=document.getElementById("R"+selR);
+  if(matchEnFor(cz)===en){
+    lb.classList.remove("sel"); rb.classList.remove("sel");
+    lb.classList.add("matched"); rb.classList.add("matched");
+    const wasDirty=matchDirty.has(cz);
+    reviewWord(cz, !wasDirty);            // clean match advances SRS; messy one re-queues sooner
+    matchTotal++; if(!wasDirty) matchClean++;
+    matchedThisBoard++; selL=null; selR=null;
+    save(); updateMatchCount();
+    mascot("happy", pick(["✓","Super!","Přesně!","Bravo!"]));
+    if(matchedThisBoard>=matchPairs.length){ matchLock=true; setTimeout(nextMatchBoard,650); }
+  } else {
+    matchLock=true; matchDirty.add(cz);
+    lb.classList.add("bad"); rb.classList.add("bad");
+    mascot("sad","Zkus to znovu");
+    const sl=selL, sr=selR;
+    setTimeout(()=>{
+      const a=document.getElementById("L"+sl), b=document.getElementById("R"+sr);
+      if(a) a.classList.remove("bad","sel"); if(b) b.classList.remove("bad","sel");
+      selL=null; selR=null; matchLock=false;
+    },600);
+  }
+}
+function nextMatchBoard(){
+  matchBoardIdx++;
+  if(matchBoardIdx>=matchBoards.length){ finishMatch(); return; }
+  renderMatchBoard();
+}
+function finishMatch(){
+  const acc = matchTotal ? matchClean/matchTotal : 1;
+  const stars = acc>=1?3:acc>=0.66?2:acc>=0.33?1:0;
+  const gained = matchTotal*8;
+  S.xp+=gained; bumpDay(gained); save();
+  renderResults({ acc, stars, gained, special:"match" });
 }
 
 /* ===== BOSS CHECKPOINT ===== */

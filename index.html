@@ -186,6 +186,18 @@
   .sheet .reset{background:none;border:none;color:var(--red);font-size:13px;cursor:pointer;text-decoration:underline}
   .sheet .place-link{background:none;border:none;color:var(--sage);font-size:13px;cursor:pointer;text-decoration:underline}
 
+  /* word match */
+  .review.practice{border-color:var(--lvl)}
+  .matchwrap .mtip{font-size:12.5px;color:var(--ink-soft);font-style:italic;margin:0 2px 16px}
+  .matchwrap .cols{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .mcol{display:flex;flex-direction:column;gap:10px}
+  .mbtn{font-family:'Newsreader',serif;font-size:17px;font-weight:500;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:13px 8px;cursor:pointer;color:var(--ink);text-align:center;line-height:1.15;min-height:56px;display:flex;align-items:center;justify-content:center;transition:transform .07s,background .2s,border-color .2s}
+  .mcol.en .mbtn{font-family:'Inter',sans-serif;font-size:14.5px;color:var(--ink-soft)}
+  .mbtn:active{transform:scale(.97)}
+  .mbtn.sel{border-color:var(--lvl);background:var(--lvl-tint);color:var(--ink)}
+  .mbtn.matched{background:var(--green-tint);border-color:var(--green);color:#1d6e3c;pointer-events:none;opacity:.6}
+  .mbtn.bad{background:var(--red-tint);border-color:var(--red);color:var(--red);animation:shake .4s ease}
+
   .hidden{display:none!important}
   @keyframes pop{0%{transform:scale(.85)}60%{transform:scale(1.06)}100%{transform:scale(1)}}
   @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
@@ -210,6 +222,7 @@
   <div class="scroll" id="home">
     <div class="welcome" id="welcome"></div>
     <div id="reviewBox"></div>
+    <div id="practiceBox"></div>
     <div class="lvlcard">
       <div class="row"><h2 id="lvlTitle"></h2><span class="goal" id="lvlGoal"></span></div>
       <div class="dots" id="lvlDots"></div>
@@ -260,6 +273,9 @@
 
   <!-- PLACEMENT / WELCOME -->
   <div class="scroll hidden" id="placement"></div>
+
+  <!-- WORD MATCH -->
+  <div class="scroll hidden matchwrap" id="match"></div>
 
   <div class="footer hidden" id="footer"><button class="btn" id="footerBtn"></button></div>
 

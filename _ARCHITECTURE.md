@@ -30,6 +30,7 @@ manifest.json   PWA metadata. sw.js  Network-first SW (bump CACHE per release). 
 - **Boss checkpoint:** unlocks after ≥3 stories cleared at a level; 8 mixed Qs; ≥80% certifies the level and unlocks the next (gives +100 XP + badge). No boss at the top level.
 - **SRS:** every glossed word → Leitner box (intervals `LEITNER_DAYS`); due words surface as a "Word review" session of auto-generated MC questions. Wrong → ~6h re-queue.
 - **Per-word mastery:** box≥4 = mastered (shown in the vocab strip).
+- **Word match (recap):** always-available practice from the home `practiceBox`. Tap-to-match, 6 Czech ↔ 6 English per board, up to 3 boards of her most-recently-learned words (`recentVocab`, sorted by `added` ts, topped up from current-level story glosses). A clean match credits the SRS (`reviewWord` true); a messy one re-queues sooner. Awards XP, not streak. View id `match`.
 
 ## Known constraints (gate-relevant)
 - Quiz items must be answerable from what's on screen (placement has no story → vocab only).
