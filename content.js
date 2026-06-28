@@ -176,10 +176,161 @@ const STORIES = [
       { q:"„Pohltit“ zde znamená:", opts:["to bore","to engross / absorb","to translate"], a:1, skill:"vocab-idiom" },
       { q:"Co dokáže špatná adaptace?", opts:["obohatit knihu","nenávratně ji pokazit","zvýšit prodej knihy"], a:1, skill:"comprehension" },
       { q:"Doplň: „Kniha nechává [...] fantazii.“ (room)", opts:[], a:["prostor"], type:"fill", skill:"vocab-abstract", explain:"<b>nechat prostor</b> = to leave room/space (for)." }
-    ]}
+    ]},
 
-  /* ===================== C2 ===================== */
-  /* C2 stories will be added in the next content wave. */
+  /* ===== WAVE 1 — added 2026-06 (B1–C2). QC by Jan (native). ===== */
+
+  /* --- B1 --- */
+  { id:"b1-recept", level:"B1", diff:4, titleCz:"Vaříme svíčkovou", titleEn:"Cooking svíčková",
+    text:"Dnes [vařím|I'm cooking] [svíčkovou|svíčková (beef in cream sauce)], typické české jídlo. [Nejdřív|First] si připravím [hovězí maso|beef] a [kořenovou zeleninu|root vegetables] — mrkev, [petržel|parsley root] a [celer|celeriac]. Maso [orestuji|I sear] na [pánvi|pan] a pak ho dám [péct|to roast] do trouby. Zeleninu [podusím|I braise] a nakonec ji [rozmixuju|I blend] na [hustou omáčku|thick sauce]. K tomu patří [knedlíky|dumplings], [brusinky|cranberries] a [šlehačka|whipped cream]. [Příprava|The preparation] [zabere|takes] skoro tři hodiny, ale [stojí to za to|it's worth it].",
+    quiz:[
+      { q:"Jaké jídlo autor vaří?", opts:["guláš","svíčkovou","polévku"], a:1, skill:"comprehension" },
+      { q:"Co patří ke svíčkové?", opts:["rýže a salát","knedlíky, brusinky a šlehačka","chléb a sýr"], a:1, skill:"vocab-food" },
+      { q:"Jak dlouho trvá příprava?", opts:["půl hodiny","skoro tři hodiny","celý den"], a:1, skill:"comprehension" },
+      { q:"Doplň: „Příprava [...] skoro tři hodiny.“ (to take time)", opts:[], a:["zabere"], type:"fill", skill:"vocab-daily", explain:"<b>zabrat (čas)</b> = to take (time). „Zabere tři hodiny.“ = It takes three hours." }
+    ]},
+  { id:"b1-doktor", level:"B1", diff:5, titleCz:"U doktora", titleEn:"At the doctor's",
+    text:"Už několik dní se [necítím dobře|I don't feel well]. Bolí mě [v krku|my throat] a mám [horečku|a fever]. Včera jsem se [objednal|made an appointment] k [lékaři|doctor]. V [čekárně|waiting room] jsem [čekal|waited] skoro hodinu. Pak mě [sestra|nurse] [zavolala|called] do [ordinace|surgery]. Doktor mě [vyšetřil|examined] a řekl, že mám [angínu|tonsillitis]. [Předepsal|He prescribed] mi [antibiotika|antibiotics] a [doporučil|recommended] [klid na lůžku|bed rest]. V [lékárně|pharmacy] jsem si [vyzvedl|picked up] léky a šel domů spát.",
+    quiz:[
+      { q:"Co autora bolí?", opts:["hlava","v krku","záda"], a:1, skill:"comprehension" },
+      { q:"Co mu doktor předepsal?", opts:["vitamíny","antibiotika","nic"], a:1, skill:"vocab-daily" },
+      { q:"Kam šel pro léky?", opts:["do obchodu","do lékárny","do nemocnice"], a:1, skill:"comprehension" },
+      { q:"Doplň minulý čas: „Doktor mě [...].“ (vyšetřit)", opts:[], a:["vyšetřil"], type:"fill", skill:"past-tense", explain:"<b>vyšetřil</b> = examined. Participle -l (he) — the helper drops in the 3rd person." }
+    ]},
+  { id:"b1-ridicak", level:"B1", diff:6, titleCz:"Učím se řídit", titleEn:"Learning to drive",
+    text:"V [pětatřiceti|at thirty-five] jsem se konečně [rozhodla|decided] [udělat si řidičák|to get my driving licence]. Vždycky jsem [jezdila|used to travel] [hromadnou dopravou|by public transport], ale teď to potřebuju kvůli práci. [Autoškola|Driving school] [není levná|isn't cheap] a [zkoušky|exams] jsou [náročné|demanding]. Nejvíc se bojím [parkování|parking] a [couvání|reversing]. Můj [instruktor|instructor] je [trpělivý|patient] a říká, že [chyby|mistakes] [patří k|are part of] učení. [Teorii|The theory] už [mám za sebou|I've got behind me], teď mě čeká [praktická zkouška|the practical test].",
+    quiz:[
+      { q:"Proč se autorka rozhodla pro řidičák?", opts:["kvůli zábavě","kvůli práci","kvůli rodině"], a:1, skill:"comprehension" },
+      { q:"Co už má hotové? (pozor)", opts:["praktickou zkoušku","teorii","celý řidičák"], a:1, skill:"comprehension", trick:true, explain:"Trick: „Teorii už mám za sebou“ = the theory is done; the practical test is still ahead. Read which part is finished." },
+      { q:"Čeho se bojí nejvíc?", opts:["rychlosti","parkování a couvání","instruktora"], a:1, skill:"vocab-daily" },
+      { q:"Doplň: „Chyby [...] k učení.“ (set phrase)", opts:[], a:["patří"], type:"fill", skill:"vocab-idiom", explain:"<b>patřit k</b> = to be part of / belong to. „Chyby patří k učení.“ = Mistakes are part of learning." }
+    ]},
+  { id:"b1-zahrada", level:"B1", diff:7, titleCz:"Naše zahrádka", titleEn:"Our little garden",
+    text:"Na [jaře|spring] jsme začali [pěstovat|to grow] vlastní [zeleninu|vegetables]. Máme malou [zahrádku|garden plot] za domem. [Zaseli jsme|We sowed] [ředkvičky|radishes], [saláty|lettuces] a [bylinky|herbs]. Každý den musíme [zalévat|water them], hlavně když je [sucho|dry]. [Plevel|Weeds] roste [rychleji|faster] než zelenina! [Trpělivost|Patience] se ale [vyplácí|pays off] — minulý týden jsme [sklidili|harvested] první [rajčata|tomatoes]. [Chutnají|They taste] mnohem [líp|better] než ty z obchodu.",
+    quiz:[
+      { q:"Kdy začali pěstovat zeleninu?", opts:["na podzim","na jaře","v zimě"], a:1, skill:"comprehension" },
+      { q:"Co roste rychleji než zelenina?", opts:["bylinky","plevel","rajčata"], a:1, skill:"comprehension" },
+      { q:"Jaká jsou domácí rajčata?", opts:["horší než z obchodu","chutnají mnohem líp","stejná"], a:1, skill:"vocab-daily" },
+      { q:"Doplň: „Trpělivost se [...].“ (to pay off)", opts:[], a:["vyplácí"], type:"fill", skill:"vocab-idiom", explain:"<b>vyplácet se</b> = to pay off / be worth it." }
+    ]},
+
+  /* --- B2 --- */
+  { id:"b2-zdravi", level:"B2", diff:3, titleCz:"Zdravý životní styl", titleEn:"A healthy lifestyle",
+    text:"V posledních letech se [stále více lidí|more and more people] [zajímá o|takes an interest in] zdravý životní styl. [Někteří|Some] [propadnou|fall for] [módním dietám|fad diets], jiní [naopak|on the contrary] [tvrdí|claim], že [stačí|it's enough to use] [zdravý rozum|common sense]. [Odborníci|Experts] se [shodují|agree] na tom, že [klíčem|the key] je [rovnováha|balance] — [pestrá strava|a varied diet], [dostatek|enough] pohybu a [spánku|sleep]. [Není třeba|There's no need] [zcela|completely] [vyřadit|to cut out] [sladkosti|sweets], stačí je [omezit|to limit]. [Zázračné řešení|A miracle solution] [neexistuje|doesn't exist]; [záleží|it depends] hlavně na [vytrvalosti|perseverance].",
+    quiz:[
+      { q:"Na čem se odborníci shodují?", opts:["na zázračné dietě","že klíčem je rovnováha","že na ničem nezáleží"], a:1, skill:"comprehension" },
+      { q:"Musíme úplně vyřadit sladkosti? (pozor)", opts:["ano, zcela","ne, stačí je omezit","jen v létě"], a:1, skill:"comprehension", trick:true, explain:"Trick: „Není třeba zcela vyřadit… stačí omezit.“ The text says limit, not eliminate. Watch the negation." },
+      { q:"„Zázračné řešení“ znamená:", opts:["a daily routine","a miracle solution","an expensive diet"], a:1, skill:"vocab-abstract" },
+      { q:"Doplň: „Klíčem je [...].“ (balance)", opts:[], a:["rovnováha"], type:"fill", skill:"vocab-abstract", explain:"<b>rovnováha</b> = balance / equilibrium." }
+    ]},
+  { id:"b2-tradice", level:"B2", diff:4, titleCz:"České Vánoce", titleEn:"Czech Christmas",
+    text:"České [Vánoce|Christmas] mají [řadu|a number of] [zvyků|customs], které [cizince|foreigners] často [překvapí|surprise]. Dárky [nenosí|doesn't bring] Santa, ale [Ježíšek|Baby Jesus], kterého [nikdo nikdy neviděl|no one has ever seen]. [Štědrý den|Christmas Eve], [čtyřiadvacátého|the 24th of] prosince, je [vyvrcholením|the climax]. K večeři se [tradičně|traditionally] [podává|is served] [kapr|carp] s [bramborovým salátem|potato salad]. [Údajně|Allegedly] kdo [vydrží|holds out] do večeře [o hladu|without eating], [uvidí|will see] [zlaté prasátko|the golden piglet]. Po večeři se [rozbalují|are unwrapped] dárky [pod stromečkem|under the tree].",
+    quiz:[
+      { q:"Kdo nosí v Česku dárky?", opts:["Santa","Ježíšek","Děda Mráz"], a:1, skill:"comprehension" },
+      { q:"Co se podává k štědrovečerní večeři?", opts:["krocan","kapr s bramborovým salátem","svíčková"], a:1, skill:"vocab-food" },
+      { q:"„Údajně“ znamená:", opts:["certainly","allegedly","never"], a:1, skill:"vocab-abstract" },
+      { q:"Doplň: „Štědrý den je [...] Vánoc.“ (the climax — instrumental)", opts:[], a:["vyvrcholením"], type:"fill", skill:"cases", explain:"<b>vyvrcholením</b> = the climax (instrumental after „je“). The -ím ending marks the instrumental here." }
+    ]},
+  { id:"b2-kariera", level:"B2", diff:5, titleCz:"Změna kariéry", titleEn:"A career change",
+    text:"Ve [čtyřiceti|at forty] jsem [opustil|left] [dobře placené|well-paid] místo v bance a stal se [učitelem|a teacher]. [Spousta lidí|A lot of people] mě [považovala za blázna|thought I was crazy]. [Přiznávám|I admit], že [zpočátku|at first] to bylo [děsivé|terrifying] — [příjem|income] [klesl|dropped] [na polovinu|by half]. [Přesto|Nevertheless] [nelituju|I don't regret it]. Práce mě konečně [naplňuje|fulfils me] a ráno [vstávám|I get up] [s chutí|gladly]. [Peníze|Money] [nejsou všechno|aren't everything]; [zjistil jsem|I've found], že [smysl|meaning] je [důležitější|more important] než [vysoký plat|a high salary].",
+    quiz:[
+      { q:"Čím se autor stal?", opts:["bankéřem","učitelem","lékařem"], a:1, skill:"comprehension" },
+      { q:"Lituje svého rozhodnutí? (pozor)", opts:["ano, velmi","ne, nelituje","nedokáže se rozhodnout"], a:1, skill:"comprehension", trick:true, explain:"Trick: „Přesto nelituju.“ Despite the lower income, he does NOT regret it. The word <b>přesto</b> (nevertheless) signals the turn." },
+      { q:"„Příjem klesl na polovinu“ znamená:", opts:["income doubled","income dropped by half","income stayed the same"], a:1, skill:"vocab-abstract" },
+      { q:"Doplň: „Smysl je [...] než vysoký plat.“ (more important)", opts:[], a:["důležitější"], type:"fill", skill:"vocab-daily", explain:"<b>důležitější</b> = more important (comparative of důležitý)." }
+    ]},
+  { id:"b2-mesta", level:"B2", diff:6, titleCz:"Praha očima turistů", titleEn:"Prague through tourists' eyes",
+    text:"Praha [patří mezi|is among] [nejnavštěvovanější|the most visited] města Evropy. [Turisté|Tourists] [obdivují|admire] [Karlův most|Charles Bridge], [Pražský hrad|Prague Castle] a [orloj|the astronomical clock] na [Staroměstském náměstí|Old Town Square]. [Centrum|The centre] je ale v létě [přeplněné|overcrowded] a [místní|locals] se mu raději [vyhýbají|avoid]. [Mnozí|Many] [Pražané|Praguers] [tvrdí|claim], že [pravou|the real] Prahu [objevíte|you'll discover] [až|only] [mimo|outside] [vyšlapané trasy|the beaten track] — v [klidných|quiet] [čtvrtích|neighbourhoods], kavárnách a parcích, kam turisté [nezavítají|don't venture].",
+    quiz:[
+      { q:"Co turisté obdivují?", opts:["nákupní centra","Karlův most a Pražský hrad","sídliště"], a:1, skill:"comprehension" },
+      { q:"Kde podle textu objevíte pravou Prahu? (pozor)", opts:["v centru u orloje","až mimo turistické trasy","jen v zimě"], a:1, skill:"comprehension", trick:true, explain:"Trick: „pravou Prahu objevíte až mimo vyšlapané trasy.“ The real Prague is OUTSIDE the tourist routes, not in the crowded centre." },
+      { q:"„Místní se centru vyhýbají“ znamená:", opts:["locals love the centre","locals avoid the centre","locals live in the centre"], a:1, skill:"vocab-daily" },
+      { q:"Doplň: „Praha patří [...] nejnavštěvovanější města.“ (among)", opts:[], a:["mezi"], type:"fill", skill:"cases", explain:"<b>patřit mezi</b> + accusative = to be among / rank among." }
+    ]},
+  { id:"b2-cteni", level:"B2", diff:7, titleCz:"Proč čteme méně", titleEn:"Why we read less",
+    text:"[Statistiky|Statistics] [ukazují|show], že lidé čtou [čím dál méně|less and less] knih. [Na vině|To blame] [bývají|tend to be] [chytré telefony|smartphones], které nám [krájí|chop up] [pozornost|attention] na malé kousky. [Soustředit se|To concentrate] na [delší text|a longer text] je dnes pro mnohé [obtížné|difficult]. Někteří [odborníci|experts] [varují před|warn against] [ztrátou|the loss] [schopnosti|of the ability] [hlubokého čtení|of deep reading]. [Na druhou stranu|On the other hand] [audioknihy|audiobooks] a [e-čtečky|e-readers] [zpřístupnily|made accessible] literaturu [novým|new] [čtenářům|readers]. [Možná|Perhaps] [nečteme|we don't read] méně, ale [jinak|differently].",
+    quiz:[
+      { q:"Co podle textu krájí naši pozornost?", opts:["knihy","chytré telefony","audioknihy"], a:1, skill:"comprehension" },
+      { q:"Čteme dnes podle závěru méně? (pozor)", opts:["ano, jednoznačně méně","možná ne — jen jinak","vůbec nečteme"], a:1, skill:"comprehension", trick:true, explain:"Trick: the closing line flips it — „Možná nečteme méně, ale jinak.“ Perhaps we read differently, not less. Read to the end." },
+      { q:"„Na druhou stranu“ je:", opts:["a linking phrase: on the other hand","a place","a kind of book"], a:0, skill:"connectives" },
+      { q:"Doplň: „Odborníci varují [...] ztrátou schopnosti.“ (against)", opts:[], a:["před"], type:"fill", skill:"cases", explain:"<b>varovat před</b> + instrumental = to warn against (something)." }
+    ]},
+
+  /* --- C1 --- */
+  { id:"c1-vzdelani", level:"C1", diff:3, titleCz:"Smysl vzdělání", titleEn:"The purpose of education",
+    text:"Už dlouho se [vede debata|a debate is held] o tom, [k čemu|what] vlastně [slouží|serves] vzdělání. [Zastánci|Advocates] [tradičního pojetí|of the traditional view] [zdůrazňují|emphasise] [předávání|the passing on] [znalostí|of knowledge]. [Kritici|Critics] [namítají|object], že škola [příliš|too much] [lpí na|clings to] [memorování|rote learning] a [opomíjí|neglects] [kritické myšlení|critical thinking]. Ve světě, kde jsou informace [na dosah|within reach] [jediného|of a single] [kliknutí|click], [ztrácí|loses] [pouhé|mere] [zapamatování|memorisation] [na významu|in significance]. [Skutečnou hodnotou|The real value] se stává [schopnost|the ability] [orientovat se|to find one's way] v [záplavě|a flood] [dat|of data] a [odlišit|to distinguish] [podstatné|the essential] [od nepodstatného|from the trivial].",
+    quiz:[
+      { q:"Co kritici tradiční škole vyčítají?", opts:["příliš mnoho kritického myšlení","že lpí na memorování a opomíjí kritické myšlení","že je zadarmo"], a:1, skill:"comprehension" },
+      { q:"„Informace na dosah jediného kliknutí“ znamená:", opts:["information is expensive","information is one click away","information is hidden"], a:1, skill:"vocab-idiom" },
+      { q:"Co se podle autora stává skutečnou hodnotou? (pozor)", opts:["zapamatování faktů","schopnost orientovat se v datech","rychlost psaní"], a:1, skill:"comprehension", trick:true, explain:"Trick: the author says mere memorisation LOSES value; the real value is the ability to navigate data. Don't pick the thing he downplays." },
+      { q:"Doplň: „Odlišit podstatné [...] nepodstatného.“ (from)", opts:[], a:["od"], type:"fill", skill:"cases", explain:"<b>odlišit od</b> + genitive = to distinguish from." }
+    ]},
+  { id:"c1-klima", level:"C1", diff:4, titleCz:"Klimatická změna", titleEn:"Climate change",
+    text:"[Klimatická změna|Climate change] [přestala být|has ceased to be] [vzdálenou hrozbou|a distant threat]. [Extrémní|Extreme] počasí — [vlny veder|heatwaves], [povodně|floods] i [sucha|droughts] — [zasahuje|affects] [stále více|ever more] regionů. [Vědci|Scientists] se [shodují|agree], že [hlavní příčinou|the main cause] je [lidská činnost|human activity]. [Přesto|Nevertheless] [část veřejnosti|part of the public] problém [bagatelizuje|plays down] nebo ho [zcela|entirely] [popírá|denies]. [Řešení|The solution] [vyžaduje|requires] [zásadní|fundamental] [proměnu|transformation] našeho [způsobu života|way of life], [což|which] je [nepohodlné|uncomfortable]. [Otázkou|The question] [zůstává|remains], [zda|whether] [budeme jednat|we will act] [včas|in time], nebo až tehdy, [když|when] [už bude pozdě|it's already too late].",
+    quiz:[
+      { q:"Co je podle vědců hlavní příčinou?", opts:["sluneční cykly","lidská činnost","náhoda"], a:1, skill:"comprehension" },
+      { q:"„Bagatelizuje“ znamená:", opts:["plays it down","exaggerates","solves it"], a:0, skill:"vocab-abstract" },
+      { q:"Jaký je postoj autora k nečinnosti? (pozor)", opts:["je v klidu","obává se, že budeme jednat až pozdě","problém popírá"], a:1, skill:"comprehension", trick:true, explain:"Trick: the closing question reveals his worry — will we act in time, or only when it's too late? He is NOT calm about it." },
+      { q:"Doplň: „Otázkou zůstává, [...] budeme jednat včas.“ (whether)", opts:[], a:["zda"], type:"fill", skill:"grammar-clauses", explain:"<b>zda</b> = whether. Introduces an indirect yes/no question (synonym: jestli)." }
+    ]},
+  { id:"c1-media", level:"C1", diff:5, titleCz:"Doba dezinformací", titleEn:"The age of disinformation",
+    text:"Žijeme v době, kdy je [stále těžší|increasingly hard] [rozeznat|to tell apart] [pravdu|truth] [od|from] [lži|a lie]. [Sociální sítě|Social networks] [umožňují|allow] [komukoli|anyone] [šířit|to spread] [zprávy|news], [aniž by|without] je kdokoli [ověřil|verifying them]. [Dezinformace|Disinformation] se [šíří|spreads] [rychleji|faster] než [jejich|their] [opravy|corrections], [protože|because] [pracuje s|it works on] [emocemi|emotions]. [Zdravá skepse|Healthy scepticism] je proto [na místě|appropriate], [ovšem|however] [přehnaná nedůvěra|excessive distrust] [vede k|leads to] [cynismu|cynicism]. [Klíčem|The key] [není|is not] [přestat věřit|to stop believing] [všemu|everything], [nýbrž|but rather] [naučit se|to learn] [ptát|to ask], [odkud|where] informace [pochází|comes from].",
+    quiz:[
+      { q:"Proč se dezinformace šíří rychleji než opravy?", opts:["jsou kratší","pracují s emocemi","jsou pravdivé"], a:1, skill:"comprehension" },
+      { q:"Co je podle autora klíčem? (pozor)", opts:["přestat věřit všemu","naučit se ptát na zdroj","věřit jen sociálním sítím"], a:1, skill:"comprehension", trick:true, explain:"Trick: „Klíčem NENÍ přestat věřit všemu, NÝBRŽ naučit se ptát…“ The key is not total distrust, but asking where info comes from." },
+      { q:"„Na místě“ zde znamená:", opts:["in a physical place","appropriate / warranted","on time"], a:1, skill:"vocab-idiom" },
+      { q:"Doplň: „Klíčem není přestat věřit, [...] naučit se ptát.“ (but rather)", opts:[], a:["nýbrž"], type:"fill", skill:"connectives", explain:"<b>nýbrž</b> = but rather. Used after a negation to introduce the correction (formal register)." }
+    ]},
+  { id:"c1-stesti", level:"C1", diff:6, titleCz:"Co je štěstí", titleEn:"What is happiness",
+    text:"[Štěstí|Happiness] [patří k|is among] [nejčastěji|the most often] [skloňovaným|discussed] slovům, [a přesto|and yet] ho umíme jen [těžko|hardly] [definovat|define]. [Reklama|Advertising] nám [vnucuje|forces on us] [představu|the notion], že štěstí se dá [koupit|be bought]. [Filozofové|Philosophers] [napříč staletími|across the centuries] [však|however] [tvrdí|claim] [opak|the opposite]: [pravé|true] [uspokojení|satisfaction] [pramení|stems] [ze|from] [vztahů|relationships], [smyslu|meaning] a [vděčnosti|gratitude]. [Paradoxně|Paradoxically] [čím usilovněji|the harder] štěstí [honíme|we chase], [tím více|the more] nám [uniká|it eludes us]. [Možná|Perhaps] proto [bývají|tend to be] [nejšťastnější|happiest] ti, kdo ho [nehledají|don't seek it] [za každou cenu|at any cost].",
+    quiz:[
+      { q:"Odkud podle filozofů pramení uspokojení?", opts:["z peněz a věcí","ze vztahů, smyslu a vděčnosti","z reklamy"], a:1, skill:"comprehension" },
+      { q:"Co se stane, čím usilovněji štěstí honíme? (pozor)", opts:["tím víc ho máme","tím víc nám uniká","nic se nezmění"], a:1, skill:"comprehension", trick:true, explain:"Trick: the paradox — „čím usilovněji honíme, tím více uniká.“ Chasing it harder makes it slip away." },
+      { q:"„Vnucuje nám představu“ znamená:", opts:["forces a notion on us","asks our opinion","proves a fact"], a:0, skill:"vocab-abstract" },
+      { q:"Doplň: „Čím usilovněji honíme, [...] více uniká.“ (the … the)", opts:[], a:["tím"], type:"fill", skill:"grammar-clauses", explain:"<b>čím … tím</b> = the … the (e.g. the harder … the more). A fixed correlative pair." }
+    ]},
+
+  /* --- C2 --- */
+  { id:"c2-cas", level:"C2", diff:1, titleCz:"Vnímání času", titleEn:"The perception of time",
+    text:"[Čas|Time] [plyne|flows] pro každého [stejně|the same], a přece ho [vnímáme|we perceive] [nesmírně|immensely] [rozdílně|differently]. V dětství se léto [zdálo|seemed] [nekonečné|endless], [zatímco|whereas] v dospělosti nám roky [protékají mezi prsty|slip through our fingers]. [Psychologové|Psychologists] to [vysvětlují|explain] tím, že [mozek|the brain] [měří|measures] čas [podle|by] [množství|the amount] [nových podnětů|of new stimuli]. [Čím rutinnější|The more routine] život, [tím rychleji|the faster] [ubíhá|it passes]. [Snad|Perhaps] právě proto [lpíme na|we cling to] [zážitcích|experiences]: [každá|every] [novinka|novelty] [jako by|as if] [natahovala|stretched out] naši [subjektivní|subjective] [paměť|memory] a [vzdorovala|defied] [pomíjivosti|transience].",
+    quiz:[
+      { q:"Jak mozek podle psychologů měří čas?", opts:["podle hodin","podle množství nových podnětů","podle věku"], a:1, skill:"comprehension" },
+      { q:"„Roky protékají mezi prsty“ je:", opts:["a literal description","an idiom: time slips away fast","a complaint about money"], a:1, skill:"vocab-idiom" },
+      { q:"Proč rutinní život ubíhá rychleji? (pozor)", opts:["protože je nudný","protože mozek registruje málo nových podnětů","protože je opravdu kratší"], a:1, skill:"comprehension", trick:true, explain:"Trick: it's about perception, not real length — few new stimuli → brain marks less → it feels faster." },
+      { q:"Doplň: „Čím rutinnější život, [...] rychleji ubíhá.“ (the … the)", opts:[], a:["tím"], type:"fill", skill:"grammar-clauses", explain:"<b>čím … tím</b> = the … the." }
+    ]},
+  { id:"c2-jazyk", level:"C2", diff:2, titleCz:"Jazyk a identita", titleEn:"Language and identity",
+    text:"[Jazyk|Language] není [pouhým|a mere] [nástrojem|tool] [dorozumívání|of communication]; [utváří|it shapes] [způsob|the way], [jakým|in which] [vnímáme|we perceive] svět. Lidé, kteří [hovoří|speak] [více jazyky|several languages], často [popisují|describe] [pocit|the feeling], že s každým jazykem [jako by|as if] [měnili|they changed] [část|part] [své osobnosti|of their personality]. [Mateřština|The mother tongue] v sobě [nese|carries] [vrstvy|layers] [vzpomínek|of memories] a [citů|emotions], [které|which] se [do|into] [cizí řeči|a foreign tongue] [přeložit nedají|cannot be translated]. [Ztratit|To lose] jazyk tak [znamená|means] [ztratit|to lose] [kus|a piece] [sebe sama|of oneself] — a proto [bývá|tends to be] [boj|the struggle] [o|for] [zachování|the preservation] [menšinových jazyků|of minority languages] [tak|so] [vášnivý|passionate].",
+    quiz:[
+      { q:"Co podle textu jazyk utváří?", opts:["jen slovní zásobu","způsob, jakým vnímáme svět","pouze přízvuk"], a:1, skill:"comprehension" },
+      { q:"Co znamená ztratit jazyk? (pozor)", opts:["ušetřit čas","ztratit kus sebe sama","naučit se jiný jazyk"], a:1, skill:"comprehension", trick:true, explain:"Trick: „Ztratit jazyk znamená ztratit kus sebe sama.“ It's framed as a loss of part of one's identity." },
+      { q:"„Přeložit nedají“ znamená:", opts:["are easy to translate","cannot be translated","must be translated"], a:1, skill:"grammar-clauses", explain:"<b>dát se</b> + infinitive = can be (done). Negated: <b>nedají se přeložit</b> = cannot be translated." },
+      { q:"Doplň: „Mateřština nese vrstvy [...] a citů.“ (of memories)", opts:[], a:["vzpomínek"], type:"fill", skill:"cases", explain:"<b>vzpomínek</b> = of memories (genitive plural after „vrstvy“)." }
+    ]},
+  { id:"c2-umeni", level:"C2", diff:3, titleCz:"Má umění cenu?", titleEn:"Does art have a price?",
+    text:"[Otázka|The question], [zda|whether] má [umění|art] nějakou [měřitelnou hodnotu|measurable value], [provokuje|has provoked] [odjakživa|since time immemorial]. [Pro jedny|For some] je [obraz|a painting] [za miliony|worth millions] [dokladem|proof] [zrůdnosti|of the grotesqueness] [trhu|of the market], [pro druhé|for others] [oprávněným|a justified] [oceněním|recognition] [geniality|of genius]. [Pravda|The truth] je, že [umělecká hodnota|artistic value] [se vzpírá|resists] [jakémukoli|any] [vzorci|formula]. [Dílo|A work], [jež|which] jednu generaci [nechává chladnou|leaves cold], [může|may] další [zasáhnout|strike] [až do morku kostí|to the very core]. [Snad|Perhaps] právě v této [nepředvídatelnosti|unpredictability] [tkví|lies] [skutečná|the true] [síla|power] umění: [odmítá|it refuses] [být|to be] [zařazeno|categorised], [zváženo|weighed] a [zaplaceno|paid for].",
+    quiz:[
+      { q:"Čemu se podle autora umělecká hodnota vzpírá?", opts:["kritice","jakémukoli vzorci","veřejnosti"], a:1, skill:"comprehension" },
+      { q:"„Zasáhnout až do morku kostí“ je:", opts:["an idiom: to affect deeply","a medical term","to ignore completely"], a:0, skill:"vocab-idiom" },
+      { q:"V čem podle autora tkví síla umění? (pozor)", opts:["ve vysoké ceně","v jeho nepředvídatelnosti","ve slávě umělce"], a:1, skill:"comprehension", trick:true, explain:"Trick: the power lies in art's UNPREDICTABILITY — its refusal to be measured — not in its price." },
+      { q:"Doplň: „Dílo, [...] jednu generaci nechává chladnou…“ (which — relative pronoun)", opts:[], a:["jež"], type:"fill", skill:"grammar-clauses", explain:"<b>jež</b> = which/that (relative pronoun, here neuter referring to „dílo“; formal alternative to „které“)." }
+    ]},
+  { id:"c2-pamet", level:"C2", diff:4, titleCz:"Paměť a nostalgie", titleEn:"Memory and nostalgia",
+    text:"[Paměť|Memory] není [věrným|a faithful] [archivem|archive], [nýbrž|but rather] [tvořivým|a creative] [vypravěčem|storyteller]. [Pokaždé|Each time], když si [něco|something] [vybavíme|we recall], [vzpomínku|the memory] [nevědomky|unwittingly] [pozměníme|we alter]. [Nostalgie|Nostalgia] pak minulost [pozlacuje|gilds]: [obtíže|the hardships] [vyblednou|fade] a [zůstane|there remains] [zidealizovaný|an idealised] [obraz|image]. [Tento sklon|This tendency] [má svůj smysl|has its purpose]: [pomáhá nám|it helps us] [vyrovnat se|to come to terms] [se ztrátami|with losses] a [dodává|gives] životu [souvislost|coherence]. [Zároveň|At the same time] nás však [může klamat|may deceive us], [budí|it stirs] [touhu|a longing] [po|for] časech, [které|which] [ve skutečnosti|in reality] [nikdy|never] [neexistovaly|existed] [tak|as] [růžově|rosily], [jak|as] si je [malujeme|we paint them].",
+    quiz:[
+      { q:"Čím podle autora paměť je?", opts:["věrným archivem","tvořivým vypravěčem","přesným strojem"], a:1, skill:"comprehension" },
+      { q:"Po čem nostalgie budí touhu? (pozor)", opts:["po reálné minulosti","po idealizovaných časech, jež tak neexistovaly","po budoucnosti"], a:1, skill:"comprehension", trick:true, explain:"Trick: nostalgia gilds the past — it longs for times that never really were as rosy as we paint them." },
+      { q:"„Minulost pozlacuje“ znamená:", opts:["makes the past seem golden/idealised","erases the past","repeats the past"], a:0, skill:"vocab-idiom" },
+      { q:"Doplň: „Paměť není věrným archivem, [...] tvořivým vypravěčem.“ (but rather)", opts:[], a:["nýbrž"], type:"fill", skill:"connectives", explain:"<b>nýbrž</b> = but rather (after a negation)." }
+    ]},
+  { id:"c2-svoboda", level:"C2", diff:5, titleCz:"Svoboda a odpovědnost", titleEn:"Freedom and responsibility",
+    text:"[Svoboda|Freedom] [bývá|tends to be] [vnímána|perceived] jako [absence|the absence] [omezení|of restrictions], [jako by|as if] [znamenala|it meant] [moci|being able] dělat [cokoli|anything]. [Takové pojetí|Such a conception] je však [zavádějící|misleading]. [Skutečná|True] svoboda [se neobejde bez|cannot do without] [odpovědnosti|responsibility]: [každá|every] [volba|choice] [s sebou nese|carries with it] [důsledky|consequences], [za něž|for which] [neseme|we bear] [vinu i zásluhu|both blame and credit]. [Společnost|A society], [v níž|in which] si každý dělá, [co chce|what they want], [bez ohledu na|regardless of] [druhé|others], se [záhy|soon] [zhroutí|collapses]. [Paradoxně|Paradoxically] tak [nejvíce|the most] svobody [užívá|enjoys] ten, kdo [dokáže|is able] [své|his own] [touhy|desires] [dobrovolně|voluntarily] [podřídit|to subordinate] [vyššímu|to a higher] [smyslu|purpose].",
+    quiz:[
+      { q:"Bez čeho se podle autora svoboda neobejde?", opts:["bez peněz","bez odpovědnosti","bez pravidel státu"], a:1, skill:"comprehension" },
+      { q:"Kdo podle autora užívá nejvíce svobody? (pozor)", opts:["kdo dělá, co chce","kdo umí své touhy podřídit vyššímu smyslu","nikdo"], a:1, skill:"comprehension", trick:true, explain:"Trick: the paradox — the freest person is the one who can voluntarily subordinate desires to a higher purpose, not the one who does whatever they want." },
+      { q:"„Zavádějící“ znamená:", opts:["leading the way","misleading","liberating"], a:1, skill:"vocab-abstract" },
+      { q:"Doplň: „Každá volba s sebou nese [...].“ (consequences)", opts:[], a:["důsledky"], type:"fill", skill:"vocab-abstract", explain:"<b>důsledky</b> = consequences (accusative plural here)." }
+    ]}
 ];
 
 /* Expose for the app (works as plain <script> include). */
