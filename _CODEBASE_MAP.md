@@ -5,7 +5,7 @@ Navigation aid. Not a session log.
 | Path | Purpose | Touch when… |
 |------|---------|-------------|
 | `index.html` | App shell, all CSS, view containers, mascot SVG, confetti canvas, PWA wiring | changing layout, styles, mascot, or adding a view |
-| `app.js` | Learning engine (state, SRS, placement, boss, badges, render) | changing behavior/logic |
+| `app.js` | Learning engine (state, SRS, placement, boss, badges, streak/freezes, word-match, backup/restore, render) | changing behavior/logic |
 | `content.js` | `SKILLS` + `STORIES` — **the lessons** | adding/fixing content (most common edit) |
 | `manifest.json` | PWA metadata (name, icons, theme) | rebranding / icon changes |
 | `sw.js` | Service worker; `CACHE` constant | **every release** — bump `CACHE` |

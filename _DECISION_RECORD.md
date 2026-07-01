@@ -45,3 +45,15 @@ Adaptive Czech-learning PWA for Natasha (post-A2). Static single-page app, no ba
 **Decision:** Ship as an installable PWA; `sw.js` is network-first with a cache fallback; bump `CACHE` on each release.
 **Rationale:** Natasha "Add to Home Screen" once; Jan pushes fixes and her app updates with no reinstall; offline still works.
 **Trade-offs:** Must remember to bump `CACHE` on each deploy or stale assets may serve offline. Progress is per-device (localStorage) — no cross-device sync.
+
+### ADR-008: Streak counts any activity + banked freezes
+**Date:** 2026-06-28 · **Status:** Accepted (supersedes the story-only streak logic)
+**Decision:** `markActivity()` advances the daily streak on ANY completed activity (story, review, match, boss, practice), once per calendar day. A missed day auto-consumes a banked **freeze** (start with 2, earn 1 at each 7-day milestone, cap 3) instead of resetting; only resets when freezes can't cover the gap.
+**Rationale:** User asked the app to push a daily habit. Any practice should keep the habit alive, and a single missed day shouldn't crush motivation (the #1 reason people quit streak apps).
+**Trade-offs:** Streak no longer strictly means "she read a story." Freeze inventory adds a little state. A freeze covers only a 1-day gap per freeze (2 missed days needs 2 freezes) — verified in unit tests.
+
+### ADR-009: Phone-first + manual backup code; no push reminders
+**Date:** 2026-06-28 · **Status:** Accepted (reverses the briefly-built ADR-less reminder feature)
+**Decision:** No backend. Cross-device / data-safety is handled by a manual **Backup/Restore code** (Settings → export/import a UTF-8-safe base64 of `S`). Daily **push reminders were built then removed** at user request; habit-nudging stays in-app (ADR-008) plus an external phone reminder the user sets.
+**Rationale:** User chose "just her phone for now" and later "forget the reminders, as long as the app can save progress." Web push on iOS needs install-to-home-screen + permission + a scheduled sender + a subscription-capture step with no backend — high friction/fragility for a personal app. A backup code gives data safety + device migration with zero infra.
+**Trade-offs:** No automatic cross-device sync (the code is a manual bridge). No branded daily notification (external phone reminder is the fallback). If we ever want real sync + push, both bundle into one small backend — revisit then.

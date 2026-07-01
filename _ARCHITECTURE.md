@@ -31,12 +31,17 @@ manifest.json   PWA metadata. sw.js  Network-first SW (bump CACHE per release). 
 - **Boss checkpoint:** unlocks after ≥3 stories cleared at a level; 8 mixed Qs; ≥80% certifies the level and unlocks the next (gives +100 XP + badge). No boss at the top level.
 - **SRS:** every glossed word → Leitner box (intervals `LEITNER_DAYS`); due words surface as a "Word review" session of auto-generated MC questions. Wrong → ~6h re-queue.
 - **Per-word mastery:** box≥4 = mastered (shown in the vocab strip).
-- **Word match (recap):** always-available practice from the home `practiceBox`. Tap-to-match, 6 Czech ↔ 6 English per board, up to 3 boards of her most-recently-learned words (`recentVocab`, sorted by `added` ts, topped up from current-level story glosses). A clean match credits the SRS (`reviewWord` true); a messy one re-queues sooner. Awards XP, not streak. View id `match`.
+- **Word match (recap):** always-available practice from the home `practiceBox`. Tap-to-match, 6 Czech ↔ 6 English per board, up to 3 boards of her most-recently-learned words (`recentVocab`, sorted by `added` ts, topped up from current-level story glosses). A clean match credits the SRS (`reviewWord` true); a messy one re-queues sooner. Awards XP and (via ADR-008) counts toward the daily streak. View id `match`.
 
 ## Known constraints (gate-relevant)
 - Quiz items must be answerable from what's on screen (placement has no story → vocab only).
 - Fill matching is accent-insensitive (`norm()` strips diacritics); answers array holds accepted forms; feedback shows `a[0]` accented.
 - Content is AI-DRAFT until native review (ADR-003).
 - TTS needs a device `cs-CZ` voice (ADR-006). Progress is per-device only (ADR-007).
-- Deploy: bump `sw.js` CACHE, push, poll live URL with cache-bust.
+- Deploy: bump `sw.js` CACHE, push, poll live URL with cache-bust. (Now at `czech-quest-v8`.)
 - Levels: `A1 A2 B1 B2 C1 C2`. Story `diff` (1..n) orders within a level (array order irrelevant).
+
+## Persistence & data safety
+- Auto-save: all state in `localStorage` key `czQuestV2` on every `save()`. Per-device; survives refreshes + updates.
+- **Backup/Restore** (Settings): `exportProgress()`/`importProgress()` — UTF-8-safe base64 of `S` (must use `b64encodeUTF8`/`b64decodeUTF8`, NOT plain btoa, because vocab keys contain Czech diacritics). Manual bridge between devices + safety net. No backend (ADR-009).
+- Push reminders were built and then removed (ADR-009). If re-added: needs a backend/cron + VAPID + install-to-home-screen + a subscription-capture step.

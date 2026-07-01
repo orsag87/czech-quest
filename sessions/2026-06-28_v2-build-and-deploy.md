@@ -34,3 +34,19 @@ M1 placement reused comprehension Qs that referenced unread stories (unanswerabl
 - After any content/code change: bump `CACHE` in `sw.js` (currently `czech-quest-v4`), commit, `git push`, then poll the live URL with a cache-bust to confirm the Pages build landed.
 - Preview server (Claude_Preview MCP) serves from SANDBOX_1 root and needs the `SANDBOX_1/Czech_Quest` symlink; port 8765.
 - `gh` is authed as `orsag87` (scopes incl. repo). Pages enable needs nested-JSON `--input -`.
+
+---
+
+## Continuation — features added after initial build (same session)
+
+Shipped after the QC audit, each tested live + deployed (SW cache bumped each time):
+
+- **Word Match module (v5)** — tap-to-match vocab recap (6 Czech ↔ 6 English), always-available from home `practiceBox`, up to 3 boards of most-recently-learned words. A clean match credits the SRS. New view id `match`; timestamps words with `added` on enroll.
+- **Streak upgrade (v6)** — `markActivity()` now fires on ANY completed activity (story/review/match/boss/practice), once/day. Banked **freezes** (start 2, earn 1 per 7-day streak, cap 3) auto-cover a missed day instead of resetting. Home shows a "keep your streak" nudge + freeze count; results shows a "streak saved" banner. Unit-tested 8 scenarios. → ADR-008.
+- **Daily reminders (v7) — built then removed.** Web push (enable flow + SW push handlers) + a free GitHub Actions cron sender (`send-reminder.js`, VAPID keys, repo secrets). Verified the cron ran (`ok=0 fail=0 total=0`). User then said "forget the reminders" → **removed in v8** (deleted workflow + sender + SW handlers + client UI; deleted the 4 VAPID/PUSH secrets). See ADR-009 + mistake #5.
+- **Backup / Restore (v8)** — replaced the reminder settings slot. Export progress → UTF-8-safe base64 code (survives Czech diacritics in vocab keys); Restore ← paste code → reload. Insurance + device migration, no backend. Tested round-trip + bad-code path. → ADR-009.
+
+New ADRs: ADR-008, ADR-009. New mistake: #5. Docs updated: _ARCHITECTURE, _CODEBASE_MAP, _PIPELINE_FIXES.
+Commits after the docs commit: `7179233` (match) → `2ae10da` (streak) → `dc5fa1a` (reminders) → `0ef41de` (drop reminders + backup). Live at SW `czech-quest-v8`.
+
+Open item unchanged and still the one true gate before sending to Natasha: **Jan's native read of the wave-1 stories**.

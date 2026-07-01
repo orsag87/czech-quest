@@ -27,3 +27,9 @@ Lessons learned the hard way. Read before touching this code.
 **Root cause:** AI-written B1–C2 Czech can carry subtle subject–verb / pronoun agreement errors that pass every structural/automated check.
 **Fix:** Made it plural throughout (`pracují`). Flagged the whole wave for native review.
 **Lesson:** Never treat AI-generated Czech as verified — structural validation (ids, answer indices, gloss brackets) cannot catch agreement/naturalness errors. Native-speaker review is a required gate before content ships.
+
+### 5. Claimed a "streak-aware" push message with no backend to source the streak
+**Symptom:** While proposing daily reminders, I told the user the push text would be personalized (e.g. "Keep your 5-day streak"). The streak lives only in the device's localStorage; the GitHub Actions cron sender has no way to read it, so it can only send a generic rotating message. I had to walk the claim back.
+**Root cause:** Described a server-driven feature using client-only state, without tracing where the data actually lives at send time.
+**Fix:** Corrected to a rotating static message; made the number-aware nudges in-app only. (Feature later removed entirely per ADR-009.)
+**Lesson:** Never promise server-side personalization (live user state inside a push/email/notification) when the architecture has no backend that can read that state at send time. Trace the data path before describing the feature.
