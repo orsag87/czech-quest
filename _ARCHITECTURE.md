@@ -27,6 +27,7 @@ manifest.json   PWA metadata. sw.js  Network-first SW (bump CACHE per release). 
 ## Learning systems (how leveling works)
 - **Placement** (first open): self-contained vocab Qs; clear-all-to-advance; sets starting level. ADR-004.
 - **Auto-level:** rolling avg of last 3 story rounds at current level; ≥0.85 → up, <0.45 → down.
+- **Streak (habit):** `markActivity()` fires on ANY completed activity (story/review/match/boss/practice), once per day. A missed day auto-consumes a banked **freeze** (start 2, earn 1 per 7-day streak, cap 3) instead of resetting; only resets when freezes can't cover the gap. Home shows a "keep your streak" nudge + banked-freeze count; results shows a "streak saved" banner when a freeze fires.
 - **Boss checkpoint:** unlocks after ≥3 stories cleared at a level; 8 mixed Qs; ≥80% certifies the level and unlocks the next (gives +100 XP + badge). No boss at the top level.
 - **SRS:** every glossed word → Leitner box (intervals `LEITNER_DAYS`); due words surface as a "Word review" session of auto-generated MC questions. Wrong → ~6h re-queue.
 - **Per-word mastery:** box≥4 = mastered (shown in the vocab strip).

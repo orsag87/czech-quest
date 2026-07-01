@@ -22,7 +22,8 @@ const DEFAULTS = {
   bossPassed:{},       // level -> true
   badges:{},           // badgeId -> earned timestamp
   placed:false,        // has she done (or skipped) the placement test
-  dayXp:0, dayKey:null // daily-goal tracking
+  dayXp:0, dayKey:null, // daily-goal tracking
+  freezes:2            // streak freezes banked (a missed day auto-consumes one)
 };
 let S = clone(DEFAULTS);
 function clone(o){ return JSON.parse(JSON.stringify(o)); }
@@ -86,6 +87,24 @@ function starString(n){ let s=""; for(let i=0;i<3;i++) s += i<n ? "★" : '<span
    The feedback still SHOWS the correctly-accented answer, so she learns the spelling. */
 function norm(s){ return (s||"").toLowerCase().trim().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[.,!?;:„“"]/g,"").replace(/\s+/g," "); }
 function todayKey(){ return new Date().toDateString(); }
+function daysBetween(aStr,bStr){ const a=new Date(aStr); a.setHours(0,0,0,0); const b=new Date(bStr); b.setHours(0,0,0,0); return Math.round((b-a)/864e5); }
+/* Advance the daily streak for ANY completed activity (story/review/match/boss/practice).
+   A missed day auto-consumes a banked freeze instead of resetting; earns a freeze every 7 days. */
+function markActivity(){
+  const today=todayKey();
+  if(S.lastDate===today){ S._streakEvent="same"; return; }   // already counted today
+  if(!S.lastDate){ S.streak=1; S.lastDate=today; S._streakEvent="up"; return; }
+  const gap=daysBetween(S.lastDate, today);
+  if(gap<=0){ S._streakEvent="same"; return; }               // clock oddity
+  if(gap===1){ S.streak++; S._streakEvent="up"; }
+  else {
+    const missed=gap-1;
+    if((S.freezes||0)>=missed){ S.freezes-=missed; S.streak++; S._streakEvent="froze"; }
+    else { S.streak=1; S._streakEvent="reset"; }
+  }
+  S.lastDate=today;
+  if(S.streak>0 && S.streak%7===0) S.freezes=Math.min((S.freezes||0)+1, 3); // earn a freeze weekly (cap 3)
+}
 function levelIdx(l){ return LEVELS.indexOf(l); }
 function storiesAt(l){ return STORIES.filter(s=>s.level===l).sort((a,b)=>(a.diff||0)-(b.diff||0)); }
 const VIEWS = ["home","reading","quiz","lesson","results","placement","match"];
@@ -189,9 +208,14 @@ function renderHome(){
   renderHud();
   const hour=new Date().getHours();
   const greet = hour<11?"Dobré ráno" : hour<18?"Ahoj" : "Dobrý večer";
-  const sub = S.streak>1 ? `Day ${S.streak} in a row — keep it going. 🔥`
-            : (S.xp>0 ? "Welcome back — let's keep learning Czech." : "Let's learn some Czech together.");
-  document.getElementById("welcome").innerHTML = `<div class="hi">${greet}, ${LEARNER} 👋</div><div class="sub">${sub}</div>`;
+  const doneToday = S.lastDate===todayKey();
+  let sub;
+  if(doneToday) sub = S.streak>0 ? `Day ${S.streak} done today — nice work. 🔥` : "Nice work today!";
+  else if(S.streak>0) sub = `Keep your ${S.streak}-day streak alive today, ${LEARNER}! 🔥`;
+  else sub = S.xp>0 ? "Welcome back — let's keep learning Czech." : "Let's learn some Czech together.";
+  const freezeLine = (S.freezes>0 && !doneToday && S.streak>0)
+    ? `<div class="sub" style="margin-top:3px">🛡️ ${S.freezes} streak freeze${S.freezes>1?'s':''} banked — one missed day won't break it.</div>` : "";
+  document.getElementById("welcome").innerHTML = `<div class="hi">${greet}, ${LEARNER} 👋</div><div class="sub">${sub}</div>${freezeLine}`;
 
   // dynamic cards: SRS review, weak spots, boss
   let cards="";
@@ -349,12 +373,12 @@ function finishQuiz(){
   qResults.forEach(r=>{ S.seen[r.skill]=(S.seen[r.skill]||0)+1; if(!r.correct) S.miss[r.skill]=(S.miss[r.skill]||0)+1; });
 
   if(mode==="srs"){
-    S.xp+=qCorrect*10; bumpDay(qCorrect*10); save();
+    S.xp+=qCorrect*10; bumpDay(qCorrect*10); markActivity(); save();
     renderResults({ acc, stars:acc>=1?3:acc>=0.66?2:acc>=0.33?1:0, gained:qCorrect*10, special:"srs" });
     return;
   }
   if(mode==="practice"){
-    S.xp+=qCorrect*10; bumpDay(qCorrect*10);
+    S.xp+=qCorrect*10; bumpDay(qCorrect*10); markActivity();
     if(acc>=0.7) delete S.miss[practiceSkill]; else S.miss[practiceSkill]=2;
     save();
     renderResults({ acc, stars:acc>=1?3:acc>=0.66?2:acc>=0.33?1:0, gained:qCorrect*10, special:"practice" });
@@ -362,7 +386,7 @@ function finishQuiz(){
   }
   if(mode==="boss"){
     const passed=acc>=0.8;
-    let gained=qCorrect*XP_PER_CORRECT[S.level]+ (passed?100:0); S.xp+=gained; bumpDay(gained);
+    let gained=qCorrect*XP_PER_CORRECT[S.level]+ (passed?100:0); S.xp+=gained; bumpDay(gained); markActivity();
     let move=null, prev=S.level;
     if(passed){
       S.bossPassed[S.level]=true;
@@ -383,8 +407,7 @@ function finishQuiz(){
   // enroll this story's words into SRS (she has now studied them)
   buildGlossary(current.text).forEach(([cz])=>enrollWord(cz,1));
   // streak
-  const today=todayKey();
-  if(S.lastDate!==today){ const y=new Date(Date.now()-864e5).toDateString(); S.streak=(S.lastDate===y)?S.streak+1:1; S.lastDate=today; }
+  markActivity();
   // rolling avg + gentle auto-level
   const lvl=S.level; (S.recent[lvl] ||= []).push(acc); if(S.recent[lvl].length>3) S.recent[lvl].shift();
   let move=null; const idx=levelIdx(lvl);
@@ -432,8 +455,9 @@ function renderResults({acc,stars,gained,move,prevLevel,topMissed,newBadges,spec
               : special==="practice" ? `Procvičování hotovo, ${LEARNER}!`
               : special==="match" ? `Spojování hotovo, ${LEARNER}!`
               : msgs[stars];
+  const freezeBanner = S._streakEvent==="froze" ? `<div class="banner up">🛡️ Streak saved, ${LEARNER}! A banked freeze covered a missed day — you're still on a ${S.streak}-day streak 🔥.</div>` : "";
 
-  document.getElementById("results").innerHTML=`<div class="result"><div class="ring">${ring}</div><h1>${pct}%</h1><div class="bigstars">${starString(stars)}</div><p>${headline}</p>${banner}${badgeHtml}${lesson}<div class="rewards"><div class="reward"><div class="v" style="color:var(--gold)">+${gained}</div><div class="l">XP</div></div><div class="reward"><div class="v">🔥 ${S.streak}</div><div class="l">streak</div></div></div></div>`;
+  document.getElementById("results").innerHTML=`<div class="result"><div class="ring">${ring}</div><h1>${pct}%</h1><div class="bigstars">${starString(stars)}</div><p>${headline}</p>${banner}${freezeBanner}${badgeHtml}${lesson}<div class="rewards"><div class="reward"><div class="v" style="color:var(--gold)">+${gained}</div><div class="l">XP</div></div><div class="reward"><div class="v">🔥 ${S.streak}</div><div class="l">streak</div></div></div></div>`;
   show("results");
   const f=document.getElementById("footer"); f.classList.remove("hidden");
   const b=document.getElementById("footerBtn"); b.textContent="Domů · Home"; b.onclick=goHome;
@@ -575,7 +599,7 @@ function finishMatch(){
   const acc = matchTotal ? matchClean/matchTotal : 1;
   const stars = acc>=1?3:acc>=0.66?2:acc>=0.33?1:0;
   const gained = matchTotal*8;
-  S.xp+=gained; bumpDay(gained); save();
+  S.xp+=gained; bumpDay(gained); markActivity(); save();
   renderResults({ acc, stars, gained, special:"match" });
 }
 

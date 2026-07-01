@@ -1,6 +1,6 @@
 /* Service worker — network-first so Natasha always gets the latest lessons,
    with an offline cache fallback. Bump CACHE on each release. */
-const CACHE = "czech-quest-v5";
+const CACHE = "czech-quest-v6";
 const ASSETS = ["./", "./index.html", "./app.js", "./content.js", "./manifest.json"];
 
 self.addEventListener("install", e => {
