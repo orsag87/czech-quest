@@ -82,6 +82,25 @@ Levels: `A1 A2 B1 B2 C1 C2`. Roadmap is ~10 stories per level.
 
 ---
 
+## Daily reminder notifications (optional)
+
+Real push reminders on iPhone need three things: the app **installed to the Home Screen**, notification **permission**, and a **daily sender** (a free GitHub Actions cron — already in `.github/workflows/daily-reminder.yml`).
+
+**Setup (one-time):**
+1. Push notification secrets already exist in the repo: `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT`, `PUSH_SUBSCRIPTIONS`. (The public key is also hard-coded in `app.js` as `VAPID_PUBLIC_KEY` — keep the two in sync if you ever rotate.)
+2. On Natasha's phone: open the app **from the Home Screen icon** → gear ⚙ → **Zapnout · Enable** → allow notifications → **copy the reminder code** it shows and send it to Jan.
+3. Store her code so the cron can reach her. Set the `PUSH_SUBSCRIPTIONS` secret to a JSON array of codes:
+   ```bash
+   gh secret set PUSH_SUBSCRIPTIONS --repo orsag87/czech-quest --body '["<her-code>"]'
+   ```
+   (Multiple devices → add more comma-separated codes in the array.)
+4. Set the send time: edit the `cron:` line in `daily-reminder.yml` for ~19:00 in her timezone (offset table is in that file). Cron is UTC and doesn't auto-adjust for daylight saving.
+5. Test it now without waiting for the cron: Actions tab ▸ **Daily reminder** ▸ **Run workflow** (or `gh workflow run daily-reminder.yml`).
+
+**Backup (recommended):** also set a plain repeating iPhone reminder/alarm — web push can occasionally be flaky, a native alarm never misses.
+
+Notes: iOS only delivers web push to Home-Screen-installed PWAs (16.4+). The push text is a rotating motivating line (it can't read her live streak number — no backend); the *in-app* streak is the number-aware part.
+
 ## iPhone: turn on the Czech voice (for read-aloud)
 
 Settings ▸ Accessibility ▸ Spoken Content ▸ Voices ▸ **Czech** ▸ download. Then read-aloud uses a real Czech voice.

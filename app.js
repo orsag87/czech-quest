@@ -23,7 +23,8 @@ const DEFAULTS = {
   badges:{},           // badgeId -> earned timestamp
   placed:false,        // has she done (or skipped) the placement test
   dayXp:0, dayKey:null, // daily-goal tracking
-  freezes:2            // streak freezes banked (a missed day auto-consumes one)
+  freezes:2,           // streak freezes banked (a missed day auto-consumes one)
+  remindersOn:false    // has she enabled daily push reminders on this device
 };
 let S = clone(DEFAULTS);
 function clone(o){ return JSON.parse(JSON.stringify(o)); }
@@ -689,6 +690,7 @@ function skipPlacement(){ S.placed=true; save(); closeSettings(); goHome(); }
 /* ===== SETTINGS ===== */
 function openSettings(){
   document.getElementById("lvlPicker").innerHTML=LEVELS.map(l=>`<div class="lvlbtn ${l===S.level?'sel':''}" data-l="${l}" onclick="pickLevel('${l}')">${l}</div>`).join("");
+  renderReminderBox();
   document.getElementById("scrim").classList.add("show");
 }
 function closeSettings(){ document.getElementById("scrim").classList.remove("show"); }
@@ -696,6 +698,62 @@ function pickLevel(l){ S.level=l; save(); document.querySelectorAll(".lvlbtn").f
 function startPlacementFromSettings(){ closeSettings(); openPlacement(); }
 function resetAll(){ if(!confirm("Reset all of "+LEARNER+"'s progress?")) return; S=clone(DEFAULTS); save(); closeSettings(); location.reload(); }
 document.getElementById("scrim").addEventListener("click",e=>{ if(e.target.id==="scrim") closeSettings(); });
+
+/* ===== DAILY REMINDERS (Web Push) ===== */
+const VAPID_PUBLIC_KEY = "BH7uA5Qe3jESy1Xe-WiJeHpxex7SrKDhm_WwDzPf_H_eCqSsASLu5n88ZB5Ldt2kQFzQAVMGuLlWouqRfbJfPpQ";
+function urlB64ToUint8Array(b64){
+  const pad="=".repeat((4 - b64.length % 4) % 4);
+  const base64=(b64+pad).replace(/-/g,"+").replace(/_/g,"/");
+  const raw=atob(base64), arr=new Uint8Array(raw.length);
+  for(let i=0;i<raw.length;i++) arr[i]=raw.charCodeAt(i);
+  return arr;
+}
+const pushSupported = ("serviceWorker" in navigator) && ("PushManager" in window) && ("Notification" in window);
+const isStandalone = window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone===true;
+
+function renderReminderBox(){
+  const box=document.getElementById("reminderBox"); if(!box) return;
+  if(!pushSupported){
+    box.innerHTML=`<div class="rem-h">🔔 Denní připomínka · Daily reminder</div><p class="rem-note">To get reminders, open this app from the Home Screen (Share ▸ Add to Home Screen), then reopen and try here.</p>`;
+    return;
+  }
+  const perm = (typeof Notification!=="undefined") ? Notification.permission : "default";
+  if(S.remindersOn && perm==="granted"){
+    box.innerHTML=`<div class="rem-h">🔔 Denní připomínka · Daily reminder</div><p class="rem-note">Reminders are on for this device. If you haven't yet, send your reminder code to Jan so he can switch them on.</p><button class="btn ghost small" onclick="enableReminders()">Show my reminder code again</button>`;
+  } else {
+    const hint = (!isStandalone) ? `<p class="rem-note">Tip: add the app to your Home Screen first (Share ▸ Add to Home Screen) — iPhone only allows reminders from there.</p>` : ``;
+    box.innerHTML=`<div class="rem-h">🔔 Denní připomínka · Daily reminder</div><p class="rem-note">A gentle daily nudge to keep your streak going.</p>${hint}<button class="btn small" style="background:var(--lvl)" onclick="enableReminders()">Zapnout · Enable</button>`;
+  }
+}
+async function enableReminders(){
+  const box=document.getElementById("reminderBox");
+  try{
+    const perm=await Notification.requestPermission();
+    if(perm!=="granted"){ box.innerHTML=`<div class="rem-h">🔔 Daily reminder</div><p class="rem-note" style="color:var(--red)">Notifications weren't allowed. You can turn them on in your phone's Settings for this app, then try again.</p>`; return; }
+    const reg=await navigator.serviceWorker.ready;
+    let sub=await reg.pushManager.getSubscription();
+    if(!sub) sub=await reg.pushManager.subscribe({ userVisibleOnly:true, applicationServerKey:urlB64ToUint8Array(VAPID_PUBLIC_KEY) });
+    S.remindersOn=true; save();
+    const code=btoa(JSON.stringify(sub));
+    showReminderCode(code);
+  }catch(e){
+    box.innerHTML=`<div class="rem-h">🔔 Daily reminder</div><p class="rem-note" style="color:var(--red)">Couldn't enable: ${e.message}. On iPhone, open the app from the Home Screen icon (not the Safari tab) and try again.</p>`;
+  }
+}
+function showReminderCode(code){
+  const box=document.getElementById("reminderBox");
+  box.innerHTML=`<div class="rem-h">✅ Skoro hotovo · Almost done</div>
+    <p class="rem-note">Reminders are set up on this device. <b>Copy this code and send it to Jan</b> — he switches on your daily reminder. (One-time only.)</p>
+    <textarea class="rem-code" id="remCode" readonly>${code}</textarea>
+    <button class="btn small" style="background:var(--lvl)" onclick="copyReminderCode()">📋 Kopírovat kód · Copy code</button>
+    <span id="remCopied" class="rem-copied"></span>`;
+}
+function copyReminderCode(){
+  const t=document.getElementById("remCode"); t.select();
+  const done=()=>{ document.getElementById("remCopied").textContent=" ✓ zkopírováno"; };
+  if(navigator.clipboard) navigator.clipboard.writeText(t.value).then(done, ()=>{ document.execCommand("copy"); done(); });
+  else { document.execCommand("copy"); done(); }
+}
 
 /* ===== BOOT ===== */
 load();

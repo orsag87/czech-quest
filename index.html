@@ -198,6 +198,13 @@
   .mbtn.matched{background:var(--green-tint);border-color:var(--green);color:#1d6e3c;pointer-events:none;opacity:.6}
   .mbtn.bad{background:var(--red-tint);border-color:var(--red);color:var(--red);animation:shake .4s ease}
 
+  /* daily reminder (settings) */
+  .reminderbox{border-top:1px solid var(--line);margin:6px 0 14px;padding-top:14px}
+  .reminderbox .rem-h{font-size:14px;font-weight:600;margin-bottom:4px}
+  .reminderbox .rem-note{font-size:12.5px;color:var(--ink-soft);margin-bottom:10px;line-height:1.45}
+  .reminderbox .rem-code{width:100%;height:70px;font-family:'Space Mono',monospace;font-size:11px;border:1.5px solid var(--line);border-radius:10px;padding:8px;resize:none;color:var(--ink-soft);background:var(--card);margin-bottom:8px}
+  .reminderbox .rem-copied{font-size:12px;color:var(--green);font-weight:600;margin-left:8px}
+
   .hidden{display:none!important}
   @keyframes pop{0%{transform:scale(.85)}60%{transform:scale(1.06)}100%{transform:scale(1)}}
   @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
@@ -311,6 +318,7 @@
     <h3>Nastavení · Settings</h3>
     <p>The app moves her up on its own as she improves — but you can set her level here.</p>
     <div class="lvlbtns" id="lvlPicker"></div>
+    <div id="reminderBox" class="reminderbox"></div>
     <button class="btn" onclick="closeSettings()">Hotovo · Done</button>
     <div class="linkrow">
       <button class="place-link" onclick="startPlacementFromSettings()">↻ Retake placement test</button>
